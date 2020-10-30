@@ -14,18 +14,21 @@ export default class Home extends React.Component
       /* REQUEST STORIES FROM DATABASE */
       collection :   ( ()=> {
         let array = [];
+
         let template = {
           valid: true,
           date : ["Wed", "Oct", "2", "2020"],
           video : "video-link",
         };
+
         for (let i = 0; i < 100; i++)
         {
-          array.push(template);
+          let tmp = Object.create(template);
+          tmp.valid = Math.round(Math.random());
+          array.push(tmp);
         }
         return array;
        })(),
-
 
       storiesPosition: 0,
       storiesListLength: 9,
@@ -71,7 +74,7 @@ export default class Home extends React.Component
 
                 {this.state.collection.slice(this.state.storiesPosition, this.state.storiesPosition + this.state.storiesListLength ).map( (storyData, index) => (
 
-                  <span key = {index} data-animate = {"off"} title="storyToolTip" className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
+                  <span data-state={storyData.valid ? 'on' : 'off' } key = {index} data-animate = {"off"} title="storyToolTip" className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
 
                     <span className= {homeCss.storyToolInfo}>
                       <StoryInfo  date = {storyData.date} />
@@ -146,6 +149,19 @@ export default class Home extends React.Component
 
         })
 
+
+        .then((currNode)=>{
+
+          (this.setState({
+
+            // UPDATE STORIES ARRAY
+            storiesPosition: this.state.storiesPosition + k
+
+          }));
+
+          return Promise.resolve(currNode);
+        })
+
         .then ((currNode)=>{
 
           return new Promise( (resolve) => {
@@ -159,20 +175,6 @@ export default class Home extends React.Component
 
         })
 
-        .then((currNode)=>{
-
-          (this.setState({
-
-            // DISABLE IN USE FLAG
-            shifterInUse: false,
-
-            // UPDATE STORIES ARRAY
-            storiesPosition: this.state.storiesPosition + k
-
-          }));
-
-          return Promise.resolve(currNode);
-        })
 
         .then (( node) => {
 
@@ -213,6 +215,17 @@ export default class Home extends React.Component
             node.parentNode.firstChild.nextSibling.disabled = true;
           }
 
+          return Promise.resolve(1)
+
+        })
+
+        .then(() =>{
+
+          (this.setState({
+
+            // DISABLE IN USE FLAG
+            shifterInUse: false,
+          }))
         })
 
         .catch((err) => console.log(err));
