@@ -3,10 +3,6 @@ import Banner  from '../../shared-components/Banner/banner';
 import homeCss from './home.css';
 import StoryInfo from '../../shared-components/StoryInfo/storyinfo';
 
-let object = {
-  date: new Date().getDate(),
-  title: "Lorem ipsum dolor sit amet consectetur, adipisicing elit",
-}
 
 export default class Home extends React.Component
 {
@@ -14,14 +10,29 @@ export default class Home extends React.Component
   {
     super(props);
     this.state = {
-      storyData: []
+
+      /* REQUEST STORIES FROM DATABASE */
+      collection :   ( ()=> {
+        let array = [];
+        let template = {
+          valid: true,
+          date : ["Wed", "Oct", "2", "2020"],
+          video : "video-link",
+        };
+        for (let i = 0; i < 100; i++)
+        {
+          array.push(template);
+        }
+        return array;
+       })(),
+
+
+      storiesPosition: 0,
+      storiesListLength: 9,
+      shifterInUse : false
     };
     this.onHoverStory = this.onHoverStory.bind(this);
-  }
-
-  onHoverStory()
-  {
-    // TDB
+    this.onClickShifter = this.onClickShifter.bind(this);
   }
 
   render()
@@ -38,7 +49,8 @@ export default class Home extends React.Component
           <div className = {homeCss.imgContainer}>
 
             {/* public social media icons  */}
-            <div className = {homeCss.socialmedia}>
+            <div >
+
               <div>
                 <span title = {"linkedin-icon"}> </span>
                 <span disabled="disabled" title = {"facebook-icon"}> </span>
@@ -53,31 +65,21 @@ export default class Home extends React.Component
 
               <div>
 
-                {/* shifter  */}
-                <span> </span>
+                <button title = {'leftShift'} onClick = {this.onClickShifter}  disabled></button>  {/* shifter  */}
 
-                {/*  list of stories  */}
-                <span className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
-                    <span className= {homeCss.storyToolInfo}> <StoryInfo meta={object} />  </span>
-                </span>
+                <button title = {'rightShift'} onClick = {this.onClickShifter}></button>   {/* shifter  */}
 
-                <span className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
-                <span className= {homeCss.storyToolInfo}>  <StoryInfo meta={object} /> </span>
-                </span>
+                {this.state.collection.slice(this.state.storiesPosition, this.state.storiesPosition + this.state.storiesListLength ).map( (storyData, index) => (
 
+                  <span key = {index} data-animate = {"off"} title="storyToolTip" className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
 
-                { //disabled stories
-                  Array.apply(null, Array(6)).map(() => (
-                    <span data-state = {"off"} className = {homeCss.story}> </span>
-                  ))
-                }
+                    <span className= {homeCss.storyToolInfo}>
+                      <StoryInfo  date = {storyData.date} />
+                    </span>
 
-                <span className = {homeCss.story} onMouseEnter = {this.onHoverStory} >
-                <span className= {homeCss.storyToolInfo}>  <StoryInfo meta={object} /> </span>
-                </span>
+                  </span>
 
-                {/* shifter  */}
-                <span> </span>
+                ))}
 
               </div>
 
@@ -101,6 +103,127 @@ export default class Home extends React.Component
     )
   }
 
+  onHoverStory()
+  {
+
+  }
+
+  onClickShifter(event)
+  {
+    event.preventDefault();
+
+    var toggleAnimateAttribute = (node, msg) => {
+      let tmp = node;
+      while (node)
+      {
+        if (node.title == "storyToolTip")
+        {
+          node.dataset.animate = msg;
+        }
+        node = node.nextSibling;
+      }
+
+      return tmp;
+
+    };
+
+    if (!this.state.shifterInUse)
+    {
+      let k =  -(event.currentTarget.title == 'leftShift') + (event.currentTarget.title == 'rightShift');
+
+      if (k)
+      {
+        new Promise( (resolve)=>{
+
+          // ENABLE IN USE FLAG
+          this.setState({shifterInUse: true});
+
+          // TOGGLE ANIMATION
+          toggleAnimateAttribute(event.currentTarget, 'on');
+
+          // PASS EVENT
+          resolve (event.currentTarget);
+
+        })
+
+        .then ((currNode)=>{
+
+          return new Promise( (resolve) => {
+
+            // ALLOW ANIMATION TO COMPLETE
+            setTimeout( () => {
+              resolve (toggleAnimateAttribute(currNode, 'off'));
+            }, 1000);
+
+          });
+
+        })
+
+        .then((currNode)=>{
+
+          (this.setState({
+
+            // DISABLE IN USE FLAG
+            shifterInUse: false,
+
+            // UPDATE STORIES ARRAY
+            storiesPosition: this.state.storiesPosition + k
+
+          }));
+
+          return Promise.resolve(currNode);
+        })
+
+        .then (( node) => {
+
+          if (this.state.storiesPosition > 0  )
+          {
+            if ( node.parentNode.firstChild.disabled === true)  // REPLACE DISABLED NODE
+            {
+              // CREATE REPLACEMENT NODE
+              let button = document.createElement('BUTTON');
+              button.title = 'leftShift';
+              button.onclick = this.onClickShifter;
+              button.disabled = false;
+
+              // REPLACE NODE
+              node.parentNode.replaceChild(button, node.parentNode.firstChild);
+            }
+          }
+          else
+          {
+            node.parentNode.firstChild.disabled = true;
+          }
+
+          if ( this.state.collection.length - this.state.storiesPosition  > this.state.storiesListLength  )
+          {
+            if ( node.parentNode.firstChild.nextSibling.disabled === true )  // REPLACE DISABLED NODE
+            {
+              // CREATE REPLACEMENT NODE
+              let button = document.createElement('BUTTON');
+              button.title = 'leftShift';
+              button.onclick = this.onClickShifter;
+
+              // REPLACE NODE
+              node.parentNode.replaceChild(button, node.parentNode.firstChild.nextSibling);
+            }
+          }
+          else
+          {
+            node.parentNode.firstChild.nextSibling.disabled = true;
+          }
+
+        })
+
+        .catch((err) => console.log(err));
+      }
+    }
+
+    else
+    {
+      /* UPDATING STORIES (IN USE) */
+    }
+  }
+
+
 }
-
-
