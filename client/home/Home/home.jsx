@@ -201,7 +201,7 @@ export default class Home extends React.Component
             {
               // CREATE REPLACEMENT NODE
               let button = document.createElement('BUTTON');
-              button.title = 'leftShift';
+              button.title = 'rightShift';
               button.onclick = this.onClickShifter;
 
               // REPLACE NODE
