@@ -75,7 +75,9 @@
 }
 
 /* STORY CLASS WITHOUT data-state attribute  --> ENABLE BLINKER*/
-.story:not([data-state="off"])::after
+/* .story:not([data-state="off"])::after */
+.story[data-state="on"]::after
+
 {
   position: absolute;
   top: 0;

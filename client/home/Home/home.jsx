@@ -12,24 +12,7 @@ export default class Home extends React.Component
     this.state = {
 
       /* REQUEST STORIES FROM DATABASE */
-      collection :   ( ()=> {
-        let array = [];
-
-        let template = {
-          valid: true,
-          date : ["Wed", "Oct", "2", "2020"],
-          video : "video-link",
-        };
-
-        for (let i = 0; i < 100; i++)
-        {
-          let tmp = Object.create(template);
-          tmp.valid = Math.round(Math.random());
-          array.push(tmp);
-        }
-        return array;
-       })(),
-
+      collection : [],
       storiesPosition: 0,
       storiesListLength: 9,
       shifterInUse : false
@@ -37,6 +20,7 @@ export default class Home extends React.Component
     this.onHoverStory = this.onHoverStory.bind(this);
     this.onClickShifter = this.onClickShifter.bind(this);
   }
+
 
   render()
   {
@@ -68,9 +52,9 @@ export default class Home extends React.Component
 
               <div>
 
-                <button title = {'leftShift'} onClick = {this.onClickShifter}  disabled></button>  {/* shifter  */}
+                <button id = {"leftShift"} title = {'leftShift'} onClick = {this.onClickShifter}  ></button>  {/* shifter  */}
 
-                <button title = {'rightShift'} onClick = {this.onClickShifter}></button>   {/* shifter  */}
+                <button id = {"rightShift"} title = {'rightShift'} onClick = {this.onClickShifter}   ></button>   {/* shifter  */}
 
                 {this.state.collection.slice(this.state.storiesPosition, this.state.storiesPosition + this.state.storiesListLength ).map( (storyData, index) => (
 
@@ -106,6 +90,39 @@ export default class Home extends React.Component
     )
   }
 
+  componentDidMount()
+  {
+    this.init();
+  }
+
+  init()
+  {
+    var  template = {
+      valid: true,
+      date : ["Wed", "Oct", "2", "2020"],
+      video : "video-link",
+    };
+
+    for (let i = 0; i < 100; i++)
+    {
+      setTimeout( (id) => {
+
+        let tmp = Object.create(template);
+
+        // NOTE DATA ARRAY IS SHARED VARIABLE
+        tmp.date = tmp.date.slice();
+        tmp.date[2] = id + "";
+
+        tmp.valid = Math.round(Math.random()) ;
+
+        this.setState ( {collection: this.state.collection.concat(tmp) })
+
+      } , 1000, i)
+
+    }
+
+  }
+
   onHoverStory()
   {
 
@@ -127,8 +144,12 @@ export default class Home extends React.Component
       }
 
       return tmp;
-
     };
+
+    if (this.state.collection.length == 0 || this.state.storiesPosition == 0 && event.currentTarget.title == 'leftShift')
+    {
+      return;
+    }
 
     if (!this.state.shifterInUse)
     {
@@ -165,7 +186,6 @@ export default class Home extends React.Component
         .then ((currNode)=>{
 
           return new Promise( (resolve) => {
-
             // ALLOW ANIMATION TO COMPLETE
             setTimeout( () => {
               resolve (toggleAnimateAttribute(currNode, 'off'));
@@ -177,55 +197,11 @@ export default class Home extends React.Component
 
 
         .then (( node) => {
-
-          if (this.state.storiesPosition > 0  )
-          {
-            if ( node.parentNode.firstChild.disabled === true)  // REPLACE DISABLED NODE
-            {
-              // CREATE REPLACEMENT NODE
-              let button = document.createElement('BUTTON');
-              button.title = 'leftShift';
-              button.onclick = this.onClickShifter;
-              button.disabled = false;
-
-              // REPLACE NODE
-              node.parentNode.replaceChild(button, node.parentNode.firstChild);
-            }
-          }
-          else
-          {
-            node.parentNode.firstChild.disabled = true;
-          }
-
-          if ( this.state.collection.length - this.state.storiesPosition  > this.state.storiesListLength  )
-          {
-            if ( node.parentNode.firstChild.nextSibling.disabled === true )  // REPLACE DISABLED NODE
-            {
-              // CREATE REPLACEMENT NODE
-              let button = document.createElement('BUTTON');
-              button.title = 'rightShift';
-              button.onclick = this.onClickShifter;
-
-              // REPLACE NODE
-              node.parentNode.replaceChild(button, node.parentNode.firstChild.nextSibling);
-            }
-          }
-          else
-          {
-            node.parentNode.firstChild.nextSibling.disabled = true;
-          }
-
-          return Promise.resolve(1)
-
-        })
-
-        .then(() =>{
-
           (this.setState({
-
             // DISABLE IN USE FLAG
             shifterInUse: false,
           }))
+          return Promise.resolve(1)
         })
 
         .catch((err) => console.log(err));
@@ -237,6 +213,5 @@ export default class Home extends React.Component
       /* UPDATING STORIES (IN USE) */
     }
   }
-
 
 }
