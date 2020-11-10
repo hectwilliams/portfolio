@@ -15,12 +15,14 @@ export default class Home extends React.Component
       collection : [],
       storiesPosition: 0,
       storiesListLength: 9,
-      shifterInUse : false
+      shifterInUse : false,
+
+      linkNames: ['home', 'email', 'apps', 'links', 'aboutme'],
     };
     this.onHoverStory = this.onHoverStory.bind(this);
     this.onClickShifter = this.onClickShifter.bind(this);
-  }
 
+  }
 
   render()
   {
@@ -28,7 +30,7 @@ export default class Home extends React.Component
 
       <div>
 
-        <Banner/>
+        <Banner name = { 'Home'} />
 
         <div className = {homeCss.container}>
 
@@ -39,10 +41,24 @@ export default class Home extends React.Component
             <div >
 
               <div>
-                <span title = {"linkedin-icon"}> </span>
-                <span disabled="disabled" title = {"facebook-icon"}> </span>
-                <span title = {"twitter-icon"}> </span>
-                <span title = {"medium-icon"}> </span>
+
+                <a href = {'https://www.linkedin.com/in/hectwilliams'}  >
+
+                  <button title = {"linkedin-icon"}></button>
+                </a>
+
+                <a>
+                  <button title = {"facebook-icon"}></button>
+                </a>
+
+                <a>
+                  <button title = {"twitter-icon"}></button>
+                </a>
+
+                <a href = {'https://hectwilliams.medium.com/'}  >
+                  <button title = {"medium-icon"}> </button>
+                </a>
+
               </div>
 
             </div>
@@ -80,7 +96,7 @@ export default class Home extends React.Component
           {/* porfolio page links   */}
           <div class = {homeCss.linksContainer}>
             {
-              Array.apply(null, Array(5)).map((ele, index) => ( <div> </div> ))
+              this.state.linkNames.map((name, index) => ( <a  title = {name} href =  {  location.pathname === '/' || location.href.indexOf(name) >= 0  ?  '' : `${location.origin}/${name}.html `   } > </a> ))
             }
           </div>
 

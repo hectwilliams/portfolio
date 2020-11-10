@@ -4,10 +4,10 @@ import BannerCss  from './banner.css';
 const tmp = 40;
 const myName = "Hector Williams";
 
-const Banner = () => (
+const Banner = ( {name} ) => (
   <div>
     <div className = {BannerCss.container}>
-      <span className = {BannerCss.bannerName}> {'Portfolio' } ⚡  </span>
+      <span title={name}> {`${name}`} ⚡ </span>
     </div>
 
     <footer>
