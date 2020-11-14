@@ -17,8 +17,9 @@ export default class Home extends React.Component
       storiesListLength: 9,
       shifterInUse : false,
 
-      linkNames: ['home', 'email', 'apps', 'links', 'aboutme'],
+      linkNames: ['home', 'email', 'apps', 'links', 'about'],
     };
+
     this.onHoverStory = this.onHoverStory.bind(this);
     this.onClickShifter = this.onClickShifter.bind(this);
 
@@ -96,7 +97,15 @@ export default class Home extends React.Component
           {/* porfolio page links   */}
           <div class = {homeCss.linksContainer}>
             {
-              this.state.linkNames.map((name, index) => ( <a  title = {name} href =  {  location.pathname === '/' || location.href.indexOf(name) >= 0  ?  '' : `${location.origin}/${name}.html `   } > </a> ))
+              this.state.linkNames.map((name, index) => (
+                <a
+                  onClick = { (event) => {event.preventDefault(), console.log(location.pathname)}  }
+                  title = {name} href =  {  (location.pathname === '/' ^ location.href.indexOf(name) ) >= 0  ?  undefined : `${location.origin}/${name}.html ` }
+                >
+
+                </a>
+
+              ))
             }
           </div>
 
