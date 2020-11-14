@@ -4,7 +4,7 @@ module.exports = {
 
   entry: {
     home: './client/home/index.jsx',
-    aboout: './client/about/index.jsx',
+    about: './client/about/index.jsx',
     email: './client/email/index.jsx',
     links: './client/links/index.jsx',
     miniapps: './client/miniapps/index.jsx'
