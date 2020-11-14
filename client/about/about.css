@@ -1,0 +1,139 @@
+.main
+{
+  background-color: ivory;
+}
+
+h1 {
+  /* border : red 2px groove; */
+}
+
+.pBox
+{
+  margin: auto;
+  height: fit-content;
+  width: 100%;
+  /* border: dashed red 2px; */
+  text-align: center;
+}
+
+.pBox p {
+  width: 40%;
+  font: 14px/16px sans-serif;
+  margin: 0 auto;
+}
+
+.pBox:nth-of-type(n + 1)  p
+{
+  width: 100%;
+  font-family: Didot, serif;
+  margin-left: 20px;
+  max-width: 95%;
+
+}
+
+.pBox:nth-of-type(1)  p
+{
+  width: 100%;
+  font-family: Apple Chancery, cursive;
+}
+
+img:nth-of-type(1)
+{
+  float: left;
+  border: green lavender 4px;
+}
+
+.yearlyTestimonial
+{
+  margin-top: 1em;
+  /* border: red dashed 2px; */
+
+  display: grid;
+  grid-template-columns: repeat(10, 10fr);
+  grid-template-rows: repeat(10, 40px);
+  width: 100%;
+  height: 100%;
+}
+
+.yearlyTestimonial > div:nth-of-type(1)
+{
+  display: inline;
+  /* margin: 30% 0; */
+  grid-column: 3 / span 6;
+  grid-row: 1 / span 10 ;
+  /* border: lavender groove 2px; */
+
+  display: grid;
+  grid-template-columns: repeat(50, 1fr);
+  grid-template-rows: repeat(50, 1fr);
+
+
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > label
+{
+  grid-row: 1 / span 1;
+  grid-column: 25/ span 10;
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > select
+{
+  grid-row: 2 / span 3;
+  grid-column: 24/ span 10;
+  font-family: fantasy;
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear]
+{
+  grid-row: 7 / span 30 ;
+  grid-column: 5/ span 45;
+
+  overflow-y: scroll;
+  border-radius: 4px;
+  padding-left: 4em;
+  padding-right: 4em;
+  counter-reset: index;
+
+  border: lavender groove 2px;
+
+
+}
+
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear]::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear]::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear] > p
+{
+  border: ridge silver 2px;
+  border-radius: 4px;
+  counter-increment: index;
+
+  font-family: fantasy;
+  font-weight: bold;
+
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear] > p::before
+{
+  content: counter(index)".";
+  left: 0;
+  position: relative;
+}
+
+.yearlyTestimonial > div:nth-of-type(1) > div[data-currYear="0"]
+{
+  background: center no-repeat url('http://localhost:3001/assets/images/icon-noFile.png')  ;
+  background-size: 25px;
+
+  border: greenyellow groove 2px;
+
+}
