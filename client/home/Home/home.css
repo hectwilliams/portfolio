@@ -333,3 +333,13 @@
   grid-column: 5 / span 1;
   background-image: url("http://localhost:3001/assets/images/icon-aboutme.png");
 }
+
+.linksContainer a:hover
+{
+  cursor: grab;
+}
+
+.linksContainer a:active
+{
+  cursor: grabbing;
+}

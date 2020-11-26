@@ -99,8 +99,15 @@ export default class Home extends React.Component
             {
               this.state.linkNames.map((name, index) => (
                 <a
-                  onClick = { (event) => {event.preventDefault(), console.log(location.pathname)}  }
-                  title = {name} href =  {  (location.pathname === '/' ^ location.href.indexOf(name) ) >= 0  ?  undefined : `${location.origin}/${name}.html ` }
+                  onClick = { (event) => {
+
+                    if (location.href.indexOf('\\') && name === 'home')
+                    {
+                      return;
+                    }
+                    location.href = `${location.origin}/${name}.html`;
+
+                  }}
                 >
 
                 </a>
