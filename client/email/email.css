@@ -1,0 +1,207 @@
+.b1
+{
+  height: 20px;
+  width: 100%;
+  border: groove 2px blueviolet;
+
+}
+
+.input
+{
+  display: grid;
+  height: fit-content;
+  width: 400px;
+
+  margin: 20px auto 0 auto ;
+
+  grid-template-columns: 60% 30%;
+  grid-template-rows: 40px 60px 20px;
+}
+
+/* input user */
+.input input:first-child
+{
+  font-weight: bold;
+  grid-row: 1;
+  grid-column: 1;
+  border: 2px groove purple;
+}
+/* text area */
+.input textarea
+{
+  grid-row: 2;
+  grid-column: 1 / end;
+}
+
+
+/* image container */
+.input > div:nth-child(3) 
+{
+  display: grid;
+  grid-template-columns: repeat(10,1fr);
+  grid-template-rows: repeat(10,1fr);
+
+}
+
+.input div button
+{
+  grid-column: 10;
+  grid-row: 5;
+  border: 2px groove black;
+  width: 80px;
+  height: 20px;
+  font-size: 8px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+
+.input div button:hover
+{
+  background-color: yellow;
+}
+.input div button:active
+{
+  background-color: gray;
+}
+
+/* submit subsribte */
+.input input:last-child 
+{
+  font-weight: bold;
+  grid-row: 3;
+  border: 1px groove gray;
+  margin: 0 0;
+  width: fit-content;
+  border-radius: 4px;
+}
+
+.input input:last-child:hover
+{
+  background-color: gray;
+}
+.input input:last-child:active
+{
+  background-color: silver;
+}
+
+
+/* testimonial container */
+.testimonialContainer
+{
+  display: block;
+  width: 80%;
+  height: 10px;
+  margin: 25px auto 0 auto;
+}
+.testimonialContainer[data-len="0"]::before
+{
+  /* content: "no testimonial... .. ."; */
+}
+
+.testimonial 
+{
+
+  width: 80%;
+  height: 50px;
+  margin: 0 auto 0 auto;
+  border: groove 2px aqua;
+
+  display: grid;
+  grid-template-rows: repeat(50, 1fr);
+  grid-template-columns: 20% 80% ;
+}
+
+/* user meta block */
+.testimonial div:first-child 
+{
+  grid-column: 1 / span 1;
+  grid-row: 1 / end;
+  border: 2px groove;
+  border-right-color: black;
+
+  display: grid;
+  grid-template-rows: repeat(50, 1fr);
+  grid-template-columns: repeat(50, 1fr);
+
+  overflow-y: auto;
+
+}
+
+/* user meta block -> image */
+.testimonial div:first-child > span:nth-child(1)
+{
+  grid-row: 1 / span 50;
+  grid-column: 1 / span 15;
+  border: 1px groove black;
+  border-radius: 50%;
+  background: center no-repeat url('http://localhost:3001/assets/images/bg.jpg')  ;
+}
+
+/* user meta block -> time stamp */
+.testimonial div:first-child > span:nth-child(2)
+{
+  grid-row: 1 / span 10;
+  grid-column: 37 / end;
+  font-size: 10px;
+  line-height: auto;
+  text-align: center;
+  font-weight: bold;
+  color: gray;
+}
+
+
+/* user meta block -> user name */
+.testimonial div:first-child > span:nth-child(3)
+{
+  grid-row: 20 / span end;
+  grid-column: 20 / span end;
+  font-size: small;
+  line-height: 20px;
+  word-wrap: normal;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+/* user rating/message block */
+.testimonial div:last-child
+{
+  grid-column: 2;
+  grid-row: 1/ end;
+  background-color: red;
+
+  display: grid;
+  grid-template-rows: repeat(50, 1fr);
+  grid-template-columns: repeat(50, 1fr);
+  overflow-y: auto;
+} 
+
+/* user rating/message block -> stars */
+.testimonial div:last-child > span
+{
+  grid-row: 4 / span 15;
+  grid-column: 3 / span 7;
+  line-height: 50%;
+}
+
+/* user rating/message block -> message */
+.testimonial div:last-child > p
+{
+  grid-row: 6 / span end;
+  grid-column:  2 / span 45;
+  font-size: small;
+  line-height: auto;
+}
+
+
+.star::before 
+{
+  content: "\2605";
+}
+
+.halfstar::before 
+{
+  content: "\2605";
+  background: -webkit-linear-gradient(#eee, #333);
+  -webkit-text-fill-color: transparent;
+}

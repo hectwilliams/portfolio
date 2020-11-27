@@ -14,14 +14,14 @@ module.exports = {
     rules: [
       {
         test: /.(js|jsx)$/,
-        use: [{ loader: 'babel-loader'}],
+        use: [{ loader: 'babel-loader' }],
         exclude: /(node_modules)/,
       },
 
       {
         test: /\.css$/,
         use: [
-          { loader: 'style-loader'},
+          { loader: 'style-loader' },
           { loader: 'css-loader', options: { modules: true } },
         ],
       },
@@ -29,7 +29,7 @@ module.exports = {
       {
         test: /.(png|jpe?g|svg)$/,
         use: [
-          { loader: 'file-loader'}
+          { loader: 'file-loader' }
         ],
         exclude: /.(png|jpe?g|svg)$/,
       },

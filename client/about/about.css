@@ -14,6 +14,7 @@ h1 {
   width: 100%;
   /* border: dashed red 2px; */
   text-align: center;
+  padding-top: 10px;
 }
 
 .pBox p {
@@ -66,8 +67,6 @@ img:nth-of-type(1)
   display: grid;
   grid-template-columns: repeat(50, 1fr);
   grid-template-rows: repeat(50, 1fr);
-
-
 }
 
 .yearlyTestimonial > div:nth-of-type(1) > label
@@ -118,7 +117,6 @@ img:nth-of-type(1)
   counter-increment: index;
 
   font-family: fantasy;
-  font-weight: bold;
 
 }
 
