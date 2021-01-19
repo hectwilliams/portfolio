@@ -42,8 +42,6 @@ export default class About extends React.Component {
   componentWillUnmount() { }
 
   render() {
-    console.log(this.state.yearlyStatusData);
-
     return (
 
       <div className={aboutCss.main}>

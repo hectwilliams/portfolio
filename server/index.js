@@ -41,8 +41,8 @@ aboutRouter.get('/data', (req, res) => {
       res.send(retTableSelectData.fetchAll());
       console.log("request data from server");
     })
+    // requested database error 
     .catch(err => {
-      // requested database error 
       res.status(404);
       console.log("error");
     })
