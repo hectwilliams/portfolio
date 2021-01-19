@@ -18,16 +18,25 @@ export default class Email extends React.Component {
         <Banner name={'Email'} />
 
         <form className={emailCss.input}>
+
           <input placeholder={'\t\tEnter username'} type='text' />
+
           <textarea placeholder="Please message me. I love feedback." rows="4" cols="50" name="comment" form="usrform"></textarea>
-          <div>
-            <button> Insert Image </button>
-          </div>
+
+          <button> Insert Image  </button>
+
           <input type="submit" value="submit" />
+
+          <select>
+            <option value="test"> visible </option>
+            <option value="test"> invisible </option>
+
+          </select>
 
         </form>
 
         <div data-len={this.state.collection.length} className={emailCss.testimonialContainer}>
+
           <div className={emailCss.testimonial}>
             <div>
               <span> </span>
@@ -38,13 +47,13 @@ export default class Email extends React.Component {
             </div>
 
             <div>
-              {/* <span>
+              <span>
+                {/* <span className={emailCss.star}></span>
                 <span className={emailCss.star}></span>
                 <span className={emailCss.star}></span>
                 <span className={emailCss.star}></span>
-                <span className={emailCss.star}></span>
-                <span className={emailCss.star}></span>
-              </span> */}
+                <span className={emailCss.star}></span> */}
+              </span>
               <p>  {'Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque similique earum fuga placeat? Quae quisquam quia tenetur pariatur ea. Quo eius doloribus ut animi modi cumque architecto, error rerum minima.'} </p>
             </div>
 
