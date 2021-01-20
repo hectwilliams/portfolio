@@ -1,34 +1,70 @@
 import React from 'react';
-import Banner  from '../shared-components/Banner/banner';
+import Banner from '../shared-components/Banner/banner';
 import linksCss from './/links.css';
 
+export default class Links extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      records: []
+    }
+  }
 
-export default class Links extends React.Component
-{
-  render()
-  {
+  componentDidMount() {
+    let newArray = [];
+    let reqObject =
+    {
+      mode: 'cors',
+      method: 'GET',
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    };
+    let reqPathName = '/data';
+    let myRequest = new Request(window.location.href + reqPathName, reqObject);
+
+    fetch(myRequest)
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((retJSON) => {
+        for (let retRecord of retJSON) {
+          newArray.push(retRecord);
+        }
+        this.setState({ records: newArray });
+        console.log(newArray);
+      })
+      .catch(err => console.log(err.stack))
+  }
+
+  render() {
     return (
       <div>
 
-        <Banner name = {'Links'}/>
+        <Banner name={'Links'} />
 
-        <div className = {linksCss.pageTitle}> Favorite Links </div>
+        <div className={linksCss.pageTitle}> Favorite Links </div>
 
-        < div className = {linksCss.container} >
+        < div className={linksCss.container} >
 
           {
-            linkData.map( (obj) => (
-              <div>
-                <span>
-                  <label title={obj.name}>  <p> <a href = {obj.link}> {obj.msg} </a> </p> </label>
-                </span>
-                <span>
-                  <p>
-                    {obj.description}
-                  </p>
-                </span>
-              </div>
-            ))
+            this.state.records.length == 0 ? '' :
+
+              this.state.records.map((record) => (
+
+                <div>
+
+                  <span>
+                    <label title={record[0]}>  <p> <a href={record[1]}> {record[1]} </a> </p> </label>
+                  </span>
+
+                  <span>
+                    <p>
+                      {record[2]}
+                    </p>
+                  </span>
+
+                </div>
+
+              ))
           }
 
         </div>
@@ -38,25 +74,6 @@ export default class Links extends React.Component
   }
 };
 
-
-var linkData = [
-
-  {
-    name: 'CodeWars',
-    link: 'https://www.codewars.com/users/hectron',
-    description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste excepturi sunt, velit iure hic maiores asperiores dignissimos minus ut eaque nulla aspernatur, nesciunt enim odio, exercitationem ad sit repellendus ab",
-    msg: 'profile'
-
-  },
-
-  {
-    name: 'TechnologyReview',
-    link: 'https://www.technologyreview.com/',
-    description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorum architecto sit dolor quibusdam quia voluptate, omnis eum sunt corrupti minus facere, sequi reiciendis? Quis nihil sit enim quaerat, animi accusantium.',
-    msg: 'https://www.technologyreview.com/'
-  },
-
-];
 
 
 
