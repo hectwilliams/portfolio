@@ -24,10 +24,13 @@ var metadata = [];
 const aboutRouter = express();  // app  -->   about-me  -->   router 
 const emailRouter = express();  // app --> email email 
 const appsRouter = express();  // app --> apps email 
+const linksRouter = express();
 
 app.use('/about.html', aboutRouter);
+app.use('/links.html', linksRouter);
+app.use('/email.html', emailRouter);
 
-// aboutme route  --= http://localhost:3001/about.html
+// aboutme basepath = http://localhost:3001/about.html
 
 aboutRouter.get('/data', (req, res) => {
   data.length = metadata.length = 0;
@@ -35,15 +38,64 @@ aboutRouter.get('/data', (req, res) => {
   db.sessionsql
     .then((schema) => {
       return schema.getTable('aboutme').select('year', 'data') // select table
-        .execute()   // execute selection statement
+        .execute();   // execute selection statement
     })
     .then((retTableSelectData) => {
       res.send(retTableSelectData.fetchAll());
-      console.log("request data from server");
     })
     // requested database error 
     .catch(err => {
       res.status(404);
-      console.log("error");
     })
 })
+
+// links basepath = http://localhost:3001/links.html
+
+linksRouter.get('/data', (req, res) => {
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('favoritelinks').select('name', 'url', 'descr')
+        .execute();
+    })
+    .then((retTableSelectData) => {
+      res.send(retTableSelectData.fetchAll());
+    })
+    .catch(err => {
+      res.status(404);
+    })
+});
+
+// links basepath = http://localhost:3001/email.html
+
+emailRouter.get('/userMessages', (req, res) => {
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('email').select('username', 'date', 'image', 'message')
+        .execute();
+    })
+    .then((retTableSelectData) => {
+      res.send(retTableSelectData.fetchAll());
+    })
+    .catch(err => {
+      res.status(404);
+    })
+});
+
+emailRouter.get('/spiritAnimals', (req, res) => {
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('spirit_animal').select('name', 'url')
+        .execute();
+    })
+    .then((retTableSelectData) => {
+      res.send(retTableSelectData.fetchAll());
+    })
+    .catch(err => {
+      res.status(404);
+    })
+});
+
+emailRouter.put('/addRecord', (req, res) => {
+  console.log(req.body);
+  res.status(200);
+});

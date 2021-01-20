@@ -16,17 +16,21 @@ CREATE TABLE EMAIL (
   PRIMARY KEY (ID)
 );
 
-INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (1, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
+INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
+INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
 
 CREATE TABLE FAVORITELINKS (
-  ID INT AUTO_INCREMENT,
+  ID INTEGER AUTO_INCREMENT NOT NULL,
   NAME TEXT,
   URL TEXT,
+  DESCR TEXT,
   PRIMARY KEY (ID)
 );
 
-INSERT INTO `FAVORITELINKS` (`ID`, `NAME`, `URL`)  VALUES(0, "codewars",          "https://www.codewars.com/users/hectron"  );
-INSERT INTO `FAVORITELINKS` (`ID`, `NAME`, `URL`)  VALUES(1, "technologyreview",  "https://www.technologyreview.com"        );
+INSERT INTO `FAVORITELINKS` (`NAME`, `URL`, `DESCR`)  VALUES("Codewars", "https://www.codewars.com/users/hectron", "Software educational program, which developers train on programming challeneges with an integrated development environment");
+INSERT INTO `FAVORITELINKS` (`NAME`, `URL`, `DESCR`)  VALUES("Technologyreview", "https://www.technologyreview.com", "Independent media company providing information on the state of technology");
+INSERT INTO `FAVORITELINKS` (`NAME`, `URL`, `DESCR`)  VALUES("Github", "https://www.github.com/hectwilliams", "My personal github page");
+INSERT INTO `FAVORITELINKS` (`NAME`, `URL`, `DESCR`)  VALUES("Math Insight", "https://mathinsight.org", "Everything math!");
 
 CREATE TABLE ABOUTME (
   ID INT AUTO_INCREMENT,
@@ -44,3 +48,18 @@ INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(4, '2020', "Gained Full Sta
 INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(5, '2020', "Historic year for the United States of America electing their first Multiracial Female Vice President." );
 INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(6, '2020', "Covid 19 shutdown forced me and my partner to spend alot of time at home. I'm a homebody but I am also an adventurous. I spent time finding some new games on my XBOX. I'm so proud of video game developers are always creating unique diverse games. I'm not sure what I would do without video games(there are board games...duh!)" );
 INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(7, '2020',  "Presently while I type this, Penn State(🔵⚪️🦁) is the worst team in the Big 10 Conference sitting at 0-3");
+
+
+CREATE TABLE SPIRIT_ANIMAL (
+  ID INTEGER AUTO_INCREMENT NOT NULL,
+  NAME TEXT,
+  URL TEXT,
+  PRIMARY KEY (ID)
+);
+
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES("a bat", "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/tnc_34284690_1640x1025.jpg?crop=0,0,1640,1230&wid=820&hei=615&scl=2.0" );
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES("a bear", "https://images.pexels.com/photos/158109/kodiak-brown-bear-adult-portrait-wildlife-158109.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" );
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a butterfly", "https://static.independent.co.uk/s3fs-public/thumbnails/image/2020/01/07/13/monarch-butterfly.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a cat", "https://1.bp.blogspot.com/-u6MUGobk8uw/Xq-g4p-MXqI/AAAAAAAAYqU/6rb2tXgmiT44tbNpyC4JwLw5Ike9HUgWgCLcBGAsYHQ/s1600/destiny-wiens-oHm8scWafA0-unsplash.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a fox", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Vulpes_vulpes_ssp_fulvus_6568085.jpg/1280px-Vulpes_vulpes_ssp_fulvus_6568085.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("n/a", "https://static.thenounproject.com/png/409659-200.png");
