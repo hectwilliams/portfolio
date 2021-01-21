@@ -24,7 +24,8 @@
   border: 2px groove purple;
   border-radius: 4px;
   height: 80%;
-  text-align: center;
+  text-align: left;
+  
 }
 
 /* text area */
@@ -46,29 +47,6 @@
   font-weight: bold;
   border-radius: 4px;
 }
-/* Insert Image Button 
-.input > span:nth-of-type(1)
-{
-  grid-column: 2;
-  grid-row: 1;
-  border: 2px groove black;
-  width: 80px;
-  height: 30px;
-  font-size: 8px;
-  font-weight: bold;
-  border-radius: 4px;
-  margin-left: 2em;
-  text-align: center;
-}
-
-.input > span:nth-of-type(1) > label ~ input
-{
-  width: 55px;
-  height: 20px;
-  font-size: smaller;
-  background-color: none;
-  border: transparent
-} */
 
 /* spirit animal section */
 .input > span:nth-of-type(1)
@@ -97,15 +75,58 @@
   display: block;
 }
 
-.input > span:nth-of-type(1) > div
+.input > input ~ div 
+{
+  border: 2px groove black;
+  width: 60px;
+  height: 30px;
+  border-radius: 4px;
+
+}
+
+.input > input ~ div > label
+{
+  font-size: xx-small;
+  color: black;
+  padding-left: 2px;
+}
+
+
+.input > input ~ div > button 
+{
+  display: inline;
+  border: 1px groove black;
+  width: 15px;
+  height: 15px;
+  margin-left: 10px;
+  border-radius: 50%;
+  outline: none;
+  background-color: red;
+  margin-top: 5px;
+}
+
+.input > input ~ div > .colorButtonClass 
+{
+  background-color: green;
+}
+
+.input[data-lock="true"]::before
+{
+  display: inline;
+  content: "🔒" + " ";
+  position: absolute;
+}
+
+.lockClass 
 {
   display: block;
+  width: 100px;
   height: 100px;
-  width: 200px;
-  border: black groove 1px;
-  background-color: pink;
-  margin-right: 20px;
+  background: url("https://plumbr.io/app/uploads/2015/01/thread-lock.jpeg");
+  background-size: contain;
+  margin: 10px auto 0 auto;
 }
+
 
 .modal 
 {
@@ -119,6 +140,13 @@
   overflow: auto;
   background-color: rgba(0,0,0, 0.8) ;
 }
+
+.modal >input:nth-child(1)
+{
+  display: inline;
+  z-index: -1;
+}
+
 .modalContent
 {
   border: 2px groove black;
@@ -129,15 +157,18 @@
 } 
 .modalClose
 {
-  color: red;
+  color: white;
   float: right;
   font-weight: bold;
   font-size: 25px;
-  width: 22px;
+  width: 20px;
+  margin: auto;
 }
 .modalClose:hover
 {
   color: red;
+  font-weight: bolder;
+  cursor: pointer;
 }
 
 .modalSelectionWindow
@@ -183,14 +214,6 @@
   border-radius: 4px;
 }
 
-.input div button:hover
-{
-  background-color: yellow;
-}
-.input div button:active
-{
-  background-color: gray;
-}
 
 /* submit subsribte */
 .input input:last-child 

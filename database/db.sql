@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS sky;
 DELETE FROM EMAIL;
 DELETE FROM FAVORITELINKS;
+DELETE FROM SPIRIT_ANIMAL;
 DELETE FROM ABOUTME;
 
 CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'testing123';
@@ -16,7 +17,6 @@ CREATE TABLE EMAIL (
   PRIMARY KEY (ID)
 );
 
-INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
 INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
 
 CREATE TABLE FAVORITELINKS (

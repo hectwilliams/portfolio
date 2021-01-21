@@ -96,6 +96,42 @@ emailRouter.get('/spiritAnimals', (req, res) => {
 });
 
 emailRouter.put('/addRecord', (req, res) => {
-  console.log(req.body);
-  res.status(200);
+
+  let attrs = ['id', 'username', 'date', 'image', 'message'];
+
+  // select table
+  db.sessionsql
+    .then(schema => {
+      return schema.getTable('email');
+    })
+    .then(spirit_animal_table => {
+      return spirit_animal_table.count()
+        .then(tableLength => {
+          return spirit_animal_table.insert(attrs).
+            values(tableLength, req.body.user, req.body.date, req.body.image, req.body.msg).
+            execute();
+        })
+    })
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(404).send();
+    })
 });
+
+/**
+ * read id 1
+ *  MySQL  localhost:33060+ ssl  marveldb  JS > db.getTable('email').select().where('id like :param').bind('param', '1').execute()
++----+-------------+------------+-------+---------------------------------------+
+| ID | USERNAME    | DATE       | IMAGE | MESSAGE                               |
++----+-------------+------------+-------+---------------------------------------+
+|  1 | whatsmyname | 2021-01-21 | NULL  | Nice page I really think it's smaller |
++----+-------------+------------+-------+---------------------------------------+
+1 row in set (0.0005 sec)
+ *
+ * delete row 1
+ *  MySQL  localhost:33060+ ssl  marveldb  JS > db.getTable('email').delete().where('id like :param').bind('param', '1').execute();
+Query OK, 1 item affected (0.0893 sec)
+ */
