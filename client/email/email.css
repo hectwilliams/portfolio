@@ -12,7 +12,42 @@
   width: 400px;
   margin: 20px auto 0 auto ;
   grid-template-columns: 60% 30%;
-  grid-template-rows: 40px 60px 20px;
+  grid-template-rows: 40px 50px 20px;
+  padding-right: 35px;
+}
+
+.input[data-lock="true"]
+{
+  background-color: rgba(0,0,0, 0.9);
+  border: black 2px groove;
+  pointer-events: none;
+}
+
+.input[data-lock="true"]::before
+{
+  position: absolute;
+  width:inherit;
+  height:inherit;
+  content: "\01F512";
+}
+
+.input[data-lock="true"] > input:nth-of-type(2),
+.input[data-lock="true"] > span:nth-of-type(1) > label ~ img,
+.input[data-lock="true"] > textarea,
+.input[data-lock="true"] > input:first-child,
+.input[data-lock="true"] > input ~ div > button 
+{
+  opacity: 0.3;
+}
+
+.input[data-lock="true"] > input ~ div > button
+{
+  background-color: inherit;
+}
+
+.input[data-lock="true"] > span:nth-of-type(1) > label ~ img
+{
+  border-color: inherit;
 }
 
 /* input user */
@@ -25,7 +60,6 @@
   border-radius: 4px;
   height: 80%;
   text-align: left;
-  
 }
 
 /* text area */
@@ -33,6 +67,8 @@
 {
   grid-row: 2;
   grid-column: 1 / end;
+  resize: none;
+  font-size: smaller;
 }
 
 /* submit */
@@ -61,6 +97,7 @@
   border-radius: 4px;
   margin-left: 2em;
   text-align: center;
+  opacity: inherit;
 }
 
 .input > span:nth-of-type(1) > label ~ img
@@ -69,10 +106,16 @@
   height: 15px;
   font-size: smaller;
   background-color: none;
-  border: 2px groove black;
+  border: 2px groove lightgreen;
   margin: 0 auto;
   object-fit: cover;
   display: block;
+  opacity: inherit;
+}
+
+.input > span:nth-of-type(1) > label ~ img:hover
+{
+  border-color: black;
 }
 
 .input > input ~ div 
@@ -81,7 +124,6 @@
   width: 60px;
   height: 30px;
   border-radius: 4px;
-
 }
 
 .input > input ~ div > label
@@ -90,7 +132,6 @@
   color: black;
   padding-left: 2px;
 }
-
 
 .input > input ~ div > button 
 {
@@ -103,6 +144,14 @@
   outline: none;
   background-color: red;
   margin-top: 5px;
+  line-height: 0;
+  padding-left: 2px;
+}
+.input > input ~ div > button::after
+{
+  content: "\2717";
+  margin-left: 0;
+  line-height: 0;
 }
 
 .input > input ~ div > .colorButtonClass 
@@ -110,12 +159,14 @@
   background-color: green;
 }
 
-.input[data-lock="true"]::before
+.input > input ~ div > .colorButtonClass::after
 {
-  display: inline;
-  content: "🔒" + " ";
-  position: absolute;
+  content: "\2713";
+
+  margin-left: 0;
+  line-height: 0;
 }
+
 
 .lockClass 
 {
@@ -126,7 +177,6 @@
   background-size: contain;
   margin: 10px auto 0 auto;
 }
-
 
 .modal 
 {
@@ -183,8 +233,8 @@
     z-index: 2;
     overflow-y: auto;
     background-color: whitesmoke;
-
 }
+
 .modalSelectionWindow > img 
 {
   border: yellow 1px groove;
@@ -200,7 +250,6 @@
   border-width: 3px;
 } 
 
-
 /* select visibility */
 .input > select
 {
@@ -214,7 +263,6 @@
   border-radius: 4px;
 }
 
-
 /* submit subsribte */
 .input input:last-child 
 {
@@ -225,6 +273,64 @@
   width: fit-content;
   border-radius: 4px;
 }
+
+/* option menu */
+
+.optionMenu
+{
+  display: block;
+  height: 20px;
+  /* border: black 2px groove; */
+  margin: 10px auto 0 auto;
+  width: 64%;
+
+}
+
+.optionMenu > div 
+{
+  display: block;
+  width: 100px;
+  height: 20px;
+}
+
+.optionMenu > span 
+{
+  display: inline-block;
+  font-size: x-small;
+}
+
+.optionMenu  > div > button:hover > .optionMenu > span
+{
+  color: red;
+}
+
+.optionMenu > div > button
+{
+  display: inline;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  background-size: cover;
+}
+
+.optionMenu> div  > button:nth-child(1)
+{
+  background: url("http://localhost:3001/assets/images/icon-sort.png");
+  background-size: cover;
+}
+
+.optionMenu> div  > button:nth-child(2)
+{
+  background: url("http://localhost:3001/assets/images/icon-date.jpg");
+  background-size: cover;
+}
+
+.optionMenu > button:hover::before
+{
+  position: relative;  
+  content : "sort by ?";
+}
+
 
 /* testimonial container */
 .testimonialContainer
@@ -238,14 +344,18 @@
 .testimonial 
 {
   width: 80%;
-  height: 50px;
+  height: fit-content;
   margin: 0 auto 0 auto;
-  /* border: groove 2px aqua; */
-  border-bottom: groove 1px black;
+  border-bottom: groove 2px black;
   display: grid;
   grid-template-rows: repeat(50, 1fr);
   grid-template-columns: 20% 80% ;
 }
+
+.compressTestimonial
+{
+  height: 50px;
+} 
 
 /* user meta block */
 .testimonial div:first-child 
@@ -293,7 +403,7 @@
   font-weight: bold;
 }
 
-/* user rating/message block */
+/* message block */
 .testimonial div:last-child
 {
   grid-column: 2;
@@ -303,7 +413,7 @@
   display: grid;
   grid-template-rows: repeat(50, 1fr);
   grid-template-columns: repeat(50, 1fr);
-  overflow-y: auto;
+  height: 100%;
 } 
 
 /* user rating/message block -> message */
@@ -313,17 +423,45 @@
   grid-column:  2 / span 45;
   font-size: small;
   font-weight: bold;
-  line-height: 1em;
+  height: max-content;
+  overflow-y: none;
 }
 
-.star::before 
+.testimonial div:last-child >  button
 {
-  content: "\2605";
+  grid-row: 40 / span end;
+  grid-column:  48/ span end;
+  line-height: 0;
+  background: none;
+  width: fit-content;
+  outline: none;
+  padding-top: 0px;
+  visibility: hidden;
 }
 
-.halfstar::before 
+/* expander button */
+
+.testimonial div:last-child >  button > span 
 {
-  content: "\2605";
-  background: -webkit-linear-gradient(#eee, #333);
-  -webkit-text-fill-color: transparent;
+  outline: none;
+  pointer-events: none;
+  width: 0.1px;
+  height: 0.1px;
+  line-height: 0;
+  font-size: 3px;
+  color: black;
+  opacity: 0.3;
+}
+.testimonial div:last-child >  button > .expanderCompressOn
+{
+  color: white;
+  opacity: 1;
+}
+
+ .testimonial:last-child,
+.testimonial:last-child > div,
+.testimonial:last-child > div > div
+{
+  background-color: white;
+  border: none;
 }

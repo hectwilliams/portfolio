@@ -116,22 +116,39 @@ emailRouter.put('/addRecord', (req, res) => {
       res.status(200).send();
     })
     .catch(err => {
-      console.log(err)
       res.status(404).send();
     })
 });
 
-/**
- * read id 1
- *  MySQL  localhost:33060+ ssl  marveldb  JS > db.getTable('email').select().where('id like :param').bind('param', '1').execute()
-+----+-------------+------------+-------+---------------------------------------+
-| ID | USERNAME    | DATE       | IMAGE | MESSAGE                               |
-+----+-------------+------------+-------+---------------------------------------+
-|  1 | whatsmyname | 2021-01-21 | NULL  | Nice page I really think it's smaller |
-+----+-------------+------------+-------+---------------------------------------+
-1 row in set (0.0005 sec)
- *
- * delete row 1
- *  MySQL  localhost:33060+ ssl  marveldb  JS > db.getTable('email').delete().where('id like :param').bind('param', '1').execute();
-Query OK, 1 item affected (0.0893 sec)
- */
+emailRouter.get('/sortUser', (req, res) => {
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('email')
+        .select('username', 'date', 'image', 'message')
+        .orderBy('username ASC')
+        .execute();
+    })
+    .then(retTableSelectData => {
+      res.send(retTableSelectData.fetchAll());
+    })
+    .catch(err => {
+      res.status(404).send();
+    })
+})
+
+
+emailRouter.get('/sortDate', (req, res) => {
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('email')
+        .select('username', 'date', 'image', 'message')
+        .orderBy('date ASC')
+        .execute();
+    })
+    .then(retTableSelectData => {
+      res.send(retTableSelectData.fetchAll());
+    })
+    .catch(err => {
+      res.status(404).send();
+    })
+})

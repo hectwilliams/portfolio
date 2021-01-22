@@ -18,6 +18,11 @@ export default class Email extends React.Component {
     this.clickAnimalButton = this.clickAnimalButton.bind(this);
     this.submitNewUser = this.submitNewUser.bind(this);
     this.visibleClick = this.visibleClick.bind(this);
+    this.srcollHeightCheck = this.srcollHeightCheck.bind(this);
+    this.expandTestimonial = this.expandTestimonial.bind(this);
+    this.sortUserName = this.sortUserName.bind(this);
+    this.sortDate = this.sortDate.bind(this);
+    this.sortAttrHelper = this.sortAttrHelper.bind(this);
   }
 
   componentDidMount() {
@@ -55,9 +60,10 @@ export default class Email extends React.Component {
 
     Promise.all(promiseArray)
       .then((retArrayList) => {
-        this.setState({ msgRecords: retArrayList[0] });
+        this.setState({ msgRecords: retArrayList[0].concat([["", "", "", ""]])   /*dummy load*/ });
         this.setState({ animalRecords: retArrayList[1] });
       });
+
   }
 
   handlerEscEvent(event) {
@@ -68,11 +74,9 @@ export default class Email extends React.Component {
       // remove 'keydown' event listener 
       window.document.removeEventListener('keydown', this.handlerEscEvent);
     }
-
   }
 
   openModal(event) {
-
     let modalParentNode = event.currentTarget.parentElement.parentElement.parentElement.firstChild;
     modalParentNode.style.display = "block";
     // add 'keydown' event listener to modal
@@ -97,46 +101,130 @@ export default class Email extends React.Component {
   visibleClick(event) {
     event.preventDefault();
     event.currentTarget.classList.toggle(emailCss.colorButtonClass);
-    console.log(event.currentTarget.classList);
+  }
+
+  parseCollectionOfRecords() {
+    let testimonialNodeList = document.getElementsByClassName(emailCss.testimonial);
+    let currElement;
+
+    for (let key in testimonialNodeList) {
+      currElement = testimonialNodeList[key];
+
+      if (currElement.children) {
+        if (currElement.children[1].children[1].style.visibility == "visible") {
+          currElement.children[1].children[1].style.visibility = "hidden";
+        }
+      }
+      // disable current  active compress button
+      if (currElement.scrollHeight > currElement.clientHeight) {
+        currElement.children[1].children[1].style.visibility = "visible";
+      }
+    }
   }
 
   submitNewUser(event) {
-    event.preventDefault();
-
-    let parentNode = (event.currentTarget.parentElement);
+    let parentNode;
     let reqPath;
     let reqObject;
-    let record = {};
+    let record;
 
+    event.preventDefault();
+
+    parentNode = (event.currentTarget.parentElement);
     if (!parentNode) {
       return;
     }
 
-    record = {
-      user: parentNode.children[0].value,
-      image: parentNode.children[2].children[2].src.indexOf('click-hand-icon') != -1 ? "https://static.thenounproject.com/png/409659-200.png" : parentNode.children[2].children[2].src,
-      visible: parentNode.children[parentNode.children.length - 1].children[1].classList.contains(emailCss.colorButtonClass),
-      msg: parentNode.children[1].value,
-      date: new Date(Date.now()).toISOString().slice(0, 10)
-    };
+    record = [
+      parentNode.children[0].value,
+      new Date(Date.now()).toISOString().slice(0, 10),
+      parentNode.children[2].children[2].src.indexOf('click-hand-icon') != -1 ? "https://static.thenounproject.com/png/409659-200.png" : parentNode.children[2].children[2].src,
+      parentNode.children[1].value
+    ]; //[username, date, image, message]
+
+    // clear user input section 
+    parentNode.children[0].value = "";
+    parentNode.children[1].value = ""
+    parentNode.children[2].children[2].src = "";
 
     reqObject = {
       method: 'PUT',
       mode: 'cors',
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(record)
+      body: JSON.stringify({
+        user: record[0], // user 
+        image: record[2], // imge link
+        visible: parentNode.children[parentNode.children.length - 1].children[1].classList.contains(emailCss.colorButtonClass),
+        msg: record[3], //comment 
+        date: record[1] // date 
+      })
     };
 
     reqPath = '/addRecord';
 
-    // fetch(new Request(window.location.href + reqPath), reqObject)
-    //   .then(() => {
-    //     this.setState({ wrLock: true })
-    //   })
-    //   .catch(err => { console.log(err.stack) })
+    // lock entry section if previous user or recently added to list 
 
-    this.setState({ wrLock: true });
+    if (!this.state.wrLock) {
+      //TODO disable section 
+      // fetch(new Request(window.location.href + reqPath), reqObject)
+      //   .then(() => {
+      //     this.setState({ wrLock: true })
+      //   })
+      //   .catch(err => { console.log(err.stack) })
 
+      // append to list 
+      this.state.msgRecords.pop(); // remove dummy  
+
+      // appen node to list 
+      this.setState({ msgRecords: this.state.msgRecords.concat([record]).concat([["", "", "", ""]]) }    /* add record and dummy load */)
+
+      // lock entry section
+      this.setState({ wrLock: true });
+      // 
+      this.parseCollectionOfRecords();
+    }
+  }
+
+  srcollHeightCheck(event) {
+    let sh = event.currentTarget.scrollHeight;
+    let ch = event.currentTarget.clientHeight;
+    if (sh > ch) {
+      event.currentTarget.children[1].children[1].style.visibility = "visible";
+    }
+  }
+
+  expandTestimonial(event) {
+    event.currentTarget.parentElement.parentElement.classList.toggle(emailCss.compressTestimonial);
+    for (let retSpan of event.currentTarget.children) {
+      retSpan.classList.toggle(emailCss.expanderCompressOn);
+    }
+  }
+
+  sortUserName(event) {
+    this.sortAttrHelper('/sortUser');
+  }
+
+  sortDate(event) {
+    this.sortAttrHelper('/sortDate');
+  }
+
+  sortAttrHelper(pathName) {
+    let array = [];
+    fetch(new Request(window.location.href + pathName), { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+      .then((response) => {
+        return response.json();
+      })
+      .then(retJsonData => {
+        for (let retRecord of retJsonData) {
+          array.push(retRecord);
+        }
+        // add dummy node
+        array = array.concat([["", "", "", ""]]);
+        // update state
+        this.setState({ msgRecords: array });
+        // parser 
+        this.parseCollectionOfRecords();
+      })
   }
 
   render() {
@@ -164,55 +252,77 @@ export default class Email extends React.Component {
 
         <Banner name={'Email'} />
 
-        {
-          // this.state.wrLock ? <div className={emailCss.lockClass}> </div> :
+        {/* user entry block */}
+        <form className={emailCss.input} data-lock={this.state.wrLock}>
 
-          <form className={emailCss.input} data-lock={this.state.wrLock}>
+          <input placeholder={'\t\tEnter username'} type='text' />
 
-            <input placeholder={'\t\tEnter username'} type='text' />
+          <textarea wrap={'hard'} placeholder="Please message me. I love feedback." rows="4" cols="40" name="comment" form="usrform"></textarea>
 
-            <textarea wrap={'hard'} placeholder="Please message me. I love feedback." rows="4" cols="50" name="comment" form="usrform"></textarea>
+          <span>
+            <label> select spirit animal </label>
+            <br></br>
+            <img src={this.state.selectImageBase} onClick={this.openModal}></img>
+          </span>
 
-            <span>
-              <label> select spirit animal </label>
-              <br></br>
-              <img src={this.state.selectImageBase} onClick={this.openModal}></img>
-            </span>
+          <input type="submit" value="submit" onClick={this.submitNewUser} />
 
-            <input type="submit" value="submit" onClick={this.submitNewUser} />
-
-            <div>
-              <label> visible </label>
-              <button className={emailCss.colorButtonClass} onClick={this.visibleClick} />
-            </div>
-          </form>
-        }
+          <div>
+            <label> visible </label>
+            <button className={emailCss.colorButtonClass} onClick={this.visibleClick} />
+          </div>
+        </form>
 
 
-        <div className={emailCss.testimonialContainer}>
+        <div className={emailCss.optionMenu}>
+          <span>   </span>
+          <div>
+            <button onClick={this.sortUserName} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort names" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
+            <button onClick={this.sortDate} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort date" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
+          </div>
+        </div>
+
+        <div className={emailCss.testimonialContainer} >
           {
             this.state.msgRecords.length == 0 ? '' :
+
               this.state.msgRecords.map((record) => (
 
-                <div className={emailCss.testimonial}  >
+                <div className={`${emailCss.testimonial} ${emailCss.compressTestimonial}`} onLoad={this.srcollHeightCheck}  >
                   <div>
                     <img src={this.state.imgURL == "" ? record[2] : this.state.imgURL} /> {/* image store */}
-                    <span> {record[1].slice(0, 10)} </span> {/* date */}
-                    <span> {`${record[0]}`} </span> {/* testimonial */}
+                    <span> {record[1].slice(0, 10)} </span>                               {/* date */}
+                    <span> {`${record[0]}`} </span>                                       {/* testimonial */}
                   </div>
 
-                  <div>
-                    <p>
-                      {record[3]}
-                    </p>
+                  <div >
+                    <p> {record[3]}</p>
+                    <button onClick={this.expandTestimonial}>
+                      {
+                        Array.apply(null, Array(3)).map(() => (
+                          <span className={emailCss.expanderCompressOn}> {'\u2B24'} </span>
+                        ))
+                      }
+                    </button>
                   </div>
                 </div>
-
               ))
+
           }
         </div>
 
-      </div>
+      </div >
     )
   }
 }
+
+/*
+lock page previous user (cookie)
+ability to clear message
+send email when message added
+  lock page after entry ✅
+  opague entry section if lock ✅
+  sort comment block by (user, data)✅
+  comment expansion  ✅
+
+*/
