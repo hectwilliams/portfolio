@@ -30,7 +30,10 @@ export default class Email extends React.Component {
   }
 
   componentDidMount() {
-    this.generateBasicNumber();
+    this.generateBasicNumber()
+      .then(() => {
+        this.getRecords();
+      })
   }
 
   generateBasicNumber() {
@@ -38,31 +41,35 @@ export default class Email extends React.Component {
     let pathName = '/codeCheck';
     let id;
 
-    let callback = () => {
-      let min = 1;
-      let max = 10000;
-      randomInteger = Math.floor(Math.random() * (max - min) + min);
+    return new Promise((resolve, reject) => {
+      let callback = () => {
+        let min = 1;
+        let max = 10000;
+        randomInteger = Math.floor(Math.random() * (max - min) + min);
 
-      // check database for if random variable used 
-      fetch(new Request(window.location.href + pathName + `/${randomInteger}`), { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
-        .then(response => {
-          return response.json();
-        })
-        .then(rcvd => {
-          clearInterval(id);
-          this.setState({ currUser: randomInteger })
-          if (!rcvd.isvalid) {
-            id = setTimeout(callback, 0);
-          }
-          else {
+
+        // check database for if random variable used 
+        fetch(new Request(window.location.href + pathName + `/${randomInteger}`), { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+          .then(response => {
+            return response.json();
+          })
+          .then(rcvd => {
+            clearInterval(id);
             this.setState({ currUser: randomInteger })
-          }
-        })
-        .catch((err) => {
-          console.log(err.stack);
-        })
-    }
-    id = setTimeout(callback, 0);
+            if (!rcvd.isvalid) {
+              id = setTimeout(callback, 0);
+            }
+            else {
+              this.setState({ currUser: randomInteger })
+              resolve("complete");
+            }
+          })
+          .catch((err) => {
+            console.log(err.stack);
+          })
+      }
+      id = setTimeout(callback, 0);
+    })
   }
 
   getRecords() {
@@ -228,11 +235,11 @@ export default class Email extends React.Component {
 
     if (!this.state.wrLock) {
       //TODO disable section 
-      // fetch(new Request(window.location.href + reqPath), reqObject)
-      //   .then(() => {
-      //     this.setState({ wrLock: true })
-      //   })
-      //   .catch(err => { console.log(err.stack) })
+      fetch(new Request(window.location.href + reqPath), reqObject)
+        .then(() => {
+          this.setState({ wrLock: true })
+        })
+        .catch(err => { console.log(err.stack) })
 
       // append to list 
       this.state.msgRecords.pop(); // remove dummy  
@@ -249,10 +256,21 @@ export default class Email extends React.Component {
   }
 
   srcollHeightCheck(event) {
-    let sh = event.currentTarget.scrollHeight;
-    let ch = event.currentTarget.clientHeight;
-    if (sh > ch) {
+    let lines = event.currentTarget.children[1].firstChild.value.split('\n').length + 2;
+    event.currentTarget.children[1].firstChild.dataset.cache = lines;
+
+    if (lines > 3) {
       event.currentTarget.children[1].children[1].style.visibility = "visible";
+      console.log(event.currentTarget.children[1].firstChild)
+      if (!event.currentTarget.children[1].firstChild.hasOwnProperty("rows")) {
+        event.currentTarget.children[1].firstChild.style.resize = 'vertical';
+        event.currentTarget.children[1].firstChild.rows = lines + 5;
+        event.currentTarget.children[1].firstChild.style.resize = 'none';
+      }
+      else {
+        event.currentTarget.children[1].firstChild.style.resize = 'none';
+        delete event.currentTarget.children[1].firstChild.rows;
+      }
     }
   }
 
@@ -268,13 +286,11 @@ export default class Email extends React.Component {
       event.currentTarget.previousElementSibling.style.resize = 'vertical';
       event.currentTarget.previousElementSibling.rows = storedLine + 5;
       event.currentTarget.previousElementSibling.style.resize = 'none';
-
     }
     else {
       event.currentTarget.previousElementSibling.style.resize = 'none';
       delete event.currentTarget.previousElementSibling.rows;
     }
-
   }
 
   sortUserName(event) {
