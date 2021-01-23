@@ -32,11 +32,6 @@
   text-align: center;
 }
 
-.auth > span:hover,
-{
-  border-color: aliceblue;
-}
-
 .auth > p
 {
   visibility: hidden;
@@ -49,6 +44,7 @@
   grid-column: 35 /  span 3;
   font-size: 12px;
   font-family: sans-serif;
+  font-family: fantasy ;
 } 
 
 .auth  > input 
@@ -191,6 +187,7 @@
   width: 60px;
   height: 30px;
   border-radius: 4px;
+  visibility: hidden;
 }
 
 .input > input ~ div > label
@@ -316,19 +313,6 @@
   border-color: blue;
   border-width: 3px;
 } 
-
-/* select visibility */
-.input > select
-{
-  grid-column: 3;
-  grid-row: 1;
-  border: 2px groove black;
-  width: 80px;
-  height: 20px;
-  font-size: 8px;
-  font-weight: bold;
-  border-radius: 4px;
-}
 
 /* submit subsribte */
 .input input:last-child 
@@ -483,6 +467,8 @@
   /* height: 100%; */
   padding-top: 0;
   margin-top: 0;
+  text-align: left;
+
 } 
 
 /* user rating/message block -> message */
@@ -496,6 +482,9 @@
   resize: none;
   overflow: hidden;
   outline: none;
+  font-family: Helvetica ;
+  align-content: flex-start;
+
 }
 
 .testimonial div:last-child >  button

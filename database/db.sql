@@ -3,10 +3,6 @@ DELETE FROM FAVORITELINKS;
 DELETE FROM SPIRIT_ANIMAL;
 DELETE FROM ABOUTME;
 
-CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'testing123';
-GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost';
-FLUSH PRIVILEGES;
-
 CREATE TABLE EMAIL (
   ID INT AUTO_INCREMENT,
   USERNAME VARCHAR(100) NOT NULL,
@@ -16,7 +12,7 @@ CREATE TABLE EMAIL (
   PRIMARY KEY (ID)
 );
 
-INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'FUDGEMAN', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "your website is garbage");
+INSERT INTO `EMAIL` ( ID, `USERNAME`, `DATE`, `IMAGE`, `MESSAGE`)  VALUES (0, 'Kenshin Himura', '2012-04-11', "https://upload.wikimedia.org/wikipedia/en/9/99/Gundam.jpg", "Whatever you lose, you'll find it again. But what you throw away you'll never get back.");
 
 CREATE TABLE FAVORITELINKS (
   ID INTEGER AUTO_INCREMENT NOT NULL,

@@ -12,7 +12,7 @@ export default class Email extends React.Component {
       selectImageBase: "http://localhost:3001/assets/images/click-hand-icon.jpg",
       wrLock: false,
       authentication: false,
-      currUser: ""
+      genNumber: ""
     }
 
     this.openModal = this.openModal.bind(this);
@@ -38,38 +38,11 @@ export default class Email extends React.Component {
 
   generateBasicNumber() {
     let randomInteger;
-    let pathName = '/codeCheck';
-    let id;
-
-    return new Promise((resolve, reject) => {
-      let callback = () => {
-        let min = 1;
-        let max = 10000;
-        randomInteger = Math.floor(Math.random() * (max - min) + min);
-
-
-        // check database for if random variable used 
-        fetch(new Request(window.location.href + pathName + `/${randomInteger}`), { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
-          .then(response => {
-            return response.json();
-          })
-          .then(rcvd => {
-            clearInterval(id);
-            this.setState({ currUser: randomInteger })
-            if (!rcvd.isvalid) {
-              id = setTimeout(callback, 0);
-            }
-            else {
-              this.setState({ currUser: randomInteger })
-              resolve("complete");
-            }
-          })
-          .catch((err) => {
-            console.log(err.stack);
-          })
-      }
-      id = setTimeout(callback, 0);
-    })
+    let min = 1;
+    let max = 10000;
+    randomInteger = Math.floor(Math.random() * (max - min) + min);
+    this.setState({ genNumber: randomInteger })
+    return Promise.resolve();
   }
 
   getRecords() {
@@ -207,7 +180,6 @@ export default class Email extends React.Component {
       new Date(Date.now()).toISOString().slice(0, 10),
       parentNode.children[2].children[2].src.indexOf('click-hand-icon') != -1 ? "https://static.thenounproject.com/png/409659-200.png" : parentNode.children[2].children[2].src,
       parentNode.children[1].value,
-      this.state.currUser
     ]; //[username, date, image, message]
 
     // clear user input section 
@@ -261,17 +233,14 @@ export default class Email extends React.Component {
 
     if (lines > 3) {
       event.currentTarget.children[1].children[1].style.visibility = "visible";
-      console.log(event.currentTarget.children[1].firstChild)
-      if (!event.currentTarget.children[1].firstChild.hasOwnProperty("rows")) {
-        event.currentTarget.children[1].firstChild.style.resize = 'vertical';
-        event.currentTarget.children[1].firstChild.rows = lines + 5;
-        event.currentTarget.children[1].firstChild.style.resize = 'none';
-      }
-      else {
-        event.currentTarget.children[1].firstChild.style.resize = 'none';
-        delete event.currentTarget.children[1].firstChild.rows;
-      }
     }
+    // let node = event.currentTarget.children[1].children[1];
+    // const event = new MouseEvent('click', {
+    //   view: window,
+    //   bubbles: true,
+    //   cancelable: true
+    // });
+    // node.dispatchEvent(event);
   }
 
   expandTestimonial(event) {
@@ -284,7 +253,7 @@ export default class Email extends React.Component {
 
     if (!event.currentTarget.previousElementSibling.hasOwnProperty("rows")) {
       event.currentTarget.previousElementSibling.style.resize = 'vertical';
-      event.currentTarget.previousElementSibling.rows = storedLine + 5;
+      event.currentTarget.previousElementSibling.rows = storedLine + 2;
       event.currentTarget.previousElementSibling.style.resize = 'none';
     }
     else {
@@ -332,9 +301,9 @@ export default class Email extends React.Component {
       !this.state.authentication ?
         ( // authenticate user
           <div className={emailCss.auth}>
-            <p > {'Generated id for user. Try to memorize it'} </p>
+            <p > {`Random number. Useless element, but it looks cool`} </p>
             <span onMouseLeave={(event) => { event.currentTarget.previousElementSibling.style.visibility = "hidden" }} onMouseOver={(event) => { { event.currentTarget.previousElementSibling.style.visibility = "visible" } }} > i </span>
-            <input value={this.state.currUser} type={'text'} ></input>
+            <input value={this.state.genNumber} type={'text'} ></input>
             <button onClick={this.authenticateUser}> View Comments </button>
           </div>
         )
