@@ -70,7 +70,7 @@ linksRouter.get('/data', (req, res) => {
 emailRouter.get('/userMessages', (req, res) => {
   db.sessionsql
     .then((schema) => {
-      return schema.getTable('email').select('username', 'date', 'image', 'message')
+      return schema.getTable('email').select('username', 'date', 'image', 'message', 'userid')
         .execute();
     })
     .then((retTableSelectData) => {
@@ -97,7 +97,7 @@ emailRouter.get('/spiritAnimals', (req, res) => {
 
 emailRouter.put('/addRecord', (req, res) => {
 
-  let attrs = ['id', 'username', 'date', 'image', 'message'];
+  let attrs = ['id', 'username', 'date', 'image', 'message', 'userid'];
 
   // select table
   db.sessionsql
@@ -108,7 +108,7 @@ emailRouter.put('/addRecord', (req, res) => {
       return spirit_animal_table.count()
         .then(tableLength => {
           return spirit_animal_table.insert(attrs).
-            values(tableLength, req.body.user, req.body.date, req.body.image, req.body.msg).
+            values(tableLength, req.body.user, req.body.date, req.body.image, req.body.msg, req.body.id).
             execute();
         })
     })
@@ -124,7 +124,7 @@ emailRouter.get('/sortUser', (req, res) => {
   db.sessionsql
     .then((schema) => {
       return schema.getTable('email')
-        .select('username', 'date', 'image', 'message')
+        .select('username', 'date', 'image', 'message', 'userid')
         .orderBy('username ASC')
         .execute();
     })
@@ -141,7 +141,7 @@ emailRouter.get('/sortDate', (req, res) => {
   db.sessionsql
     .then((schema) => {
       return schema.getTable('email')
-        .select('username', 'date', 'image', 'message')
+        .select('username', 'date', 'image', 'message', 'userid')
         .orderBy('date ASC')
         .execute();
     })
@@ -152,3 +152,29 @@ emailRouter.get('/sortDate', (req, res) => {
       res.status(404).send();
     })
 })
+
+emailRouter.get('/codeCheck/:id', (req, res) => {
+
+  db.sessionsql
+    .then((schema) => {
+      return schema.getTable('email');
+    })
+    .then((table) => {
+      return table.select().
+        where('userid like :param').
+        bind('param', `${req.params.id}`).
+        execute()
+        .then(retTableSelectData => {
+          console.log(retTableSelectData.fetchAll().length)
+          return res.send({ isvalid: retTableSelectData.fetchAll().length == 0 });
+        })
+    })
+
+    .catch(err => {
+      res.status(404).send();
+    });
+})
+
+// emailRouter.get('/getCookie', (req, res) => {
+
+// })

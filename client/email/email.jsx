@@ -10,7 +10,9 @@ export default class Email extends React.Component {
       animalRecords: [],
       imgURL: "",
       selectImageBase: "http://localhost:3001/assets/images/click-hand-icon.jpg",
-      wrLock: false
+      wrLock: false,
+      authentication: false,
+      currUser: ""
     }
 
     this.openModal = this.openModal.bind(this);
@@ -23,9 +25,48 @@ export default class Email extends React.Component {
     this.sortUserName = this.sortUserName.bind(this);
     this.sortDate = this.sortDate.bind(this);
     this.sortAttrHelper = this.sortAttrHelper.bind(this);
+    this.authenticateUser = this.authenticateUser.bind(this);
+    this.getRecords = this.getRecords.bind(this);
   }
 
   componentDidMount() {
+    this.generateBasicNumber();
+  }
+
+  generateBasicNumber() {
+    let randomInteger;
+    let pathName = '/codeCheck';
+    let id;
+
+    let callback = () => {
+      let min = 1;
+      let max = 10000;
+      randomInteger = Math.floor(Math.random() * (max - min) + min);
+
+      // check database for if random variable used 
+      fetch(new Request(window.location.href + pathName + `/${randomInteger}`), { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(response => {
+          return response.json();
+        })
+        .then(rcvd => {
+          clearInterval(id);
+          this.setState({ currUser: randomInteger })
+          if (!rcvd.isvalid) {
+            id = setTimeout(callback, 0);
+          }
+          else {
+            this.setState({ currUser: randomInteger })
+          }
+        })
+        .catch((err) => {
+          console.log(err.stack);
+        })
+    }
+    id = setTimeout(callback, 0);
+  }
+
+  getRecords() {
+
     let reqObject =
     {
       mode: 'cors',
@@ -63,7 +104,6 @@ export default class Email extends React.Component {
         this.setState({ msgRecords: retArrayList[0].concat([["", "", "", ""]])   /*dummy load*/ });
         this.setState({ animalRecords: retArrayList[1] });
       });
-
   }
 
   handlerEscEvent(event) {
@@ -104,29 +144,49 @@ export default class Email extends React.Component {
   }
 
   parseCollectionOfRecords() {
-    let testimonialNodeList = document.getElementsByClassName(emailCss.testimonial);
+    let testimonialNodeList
     let currElement;
+    let id;
+    let key;
+    let lineCount;
 
-    for (let key in testimonialNodeList) {
-      currElement = testimonialNodeList[key];
+    let callback = () => {
+      clearInterval(id);
+      testimonialNodeList = document.getElementsByClassName(emailCss.testimonial);
+      if (testimonialNodeList.length != 0) {
+        for (let i = 0; i < testimonialNodeList.length; i++) {
+          key = i.toString();
+          currElement = testimonialNodeList[key];
 
-      if (currElement.children) {
-        if (currElement.children[1].children[1].style.visibility == "visible") {
-          currElement.children[1].children[1].style.visibility = "hidden";
+          if (currElement.children) {
+            if (currElement.children[1].children[1].style.visibility == "visible") {
+              currElement.children[1].children[1].style.visibility = "hidden";
+            }
+          }
+
+          lineCount = currElement.children[1].firstChild.value.split('\n').length + 2;
+
+          // active compress button
+          if (lineCount > 3) {
+            currElement.children[1].children[1].style.visibility = "visible";
+            currElement.children[1].children[0].dataset.cache = lineCount;
+          }
         }
       }
-      // disable current  active compress button
-      if (currElement.scrollHeight > currElement.clientHeight) {
-        currElement.children[1].children[1].style.visibility = "visible";
+
+      else {
+        id = setTimeout(callback, 0);
       }
     }
+
+    id = setTimeout(callback, 0);
   }
 
   submitNewUser(event) {
     let parentNode;
-    let reqPath;
-    let reqObject;
     let record;
+    let reqObject;
+    let reqPath;
 
     event.preventDefault();
 
@@ -139,7 +199,8 @@ export default class Email extends React.Component {
       parentNode.children[0].value,
       new Date(Date.now()).toISOString().slice(0, 10),
       parentNode.children[2].children[2].src.indexOf('click-hand-icon') != -1 ? "https://static.thenounproject.com/png/409659-200.png" : parentNode.children[2].children[2].src,
-      parentNode.children[1].value
+      parentNode.children[1].value,
+      this.state.currUser
     ]; //[username, date, image, message]
 
     // clear user input section 
@@ -156,7 +217,8 @@ export default class Email extends React.Component {
         image: record[2], // imge link
         visible: parentNode.children[parentNode.children.length - 1].children[1].classList.contains(emailCss.colorButtonClass),
         msg: record[3], //comment 
-        date: record[1] // date 
+        date: record[1], // date 
+        id: record[4]
       })
     };
 
@@ -181,6 +243,7 @@ export default class Email extends React.Component {
       // lock entry section
       this.setState({ wrLock: true });
       // 
+
       this.parseCollectionOfRecords();
     }
   }
@@ -198,6 +261,20 @@ export default class Email extends React.Component {
     for (let retSpan of event.currentTarget.children) {
       retSpan.classList.toggle(emailCss.expanderCompressOn);
     }
+
+    let storedLine = parseInt(JSON.parse(event.currentTarget.previousElementSibling.dataset.cache));
+
+    if (!event.currentTarget.previousElementSibling.hasOwnProperty("rows")) {
+      event.currentTarget.previousElementSibling.style.resize = 'vertical';
+      event.currentTarget.previousElementSibling.rows = storedLine + 5;
+      event.currentTarget.previousElementSibling.style.resize = 'none';
+
+    }
+    else {
+      event.currentTarget.previousElementSibling.style.resize = 'none';
+      delete event.currentTarget.previousElementSibling.rows;
+    }
+
   }
 
   sortUserName(event) {
@@ -227,91 +304,109 @@ export default class Email extends React.Component {
       })
   }
 
+  authenticateUser(event) {
+    event.preventDefault();
+    this.setState({ authentication: true });
+  }
+
   render() {
+
     return (
-      <div  >
 
-        {/* modal  */}
-        <div data-title={"modal"} className={emailCss.modal} onClick={this.clickModal}  >
-
-          {/* modal close  */}
-          <span className={emailCss.modalClose} onClick={this.closeModal} > {'\u00D7'}  </span>
-
-          {/* selection box window */}
-          <div className={emailCss.modalSelectionWindow} >
-
-            {/* images list border */}
-            {
-              this.state.animalRecords.length == 0 ? '' :
-                this.state.animalRecords.map((record) => (
-                  <img alt={record[0]} src={record[1]} onClick={this.clickAnimalButton} />
-                ))
-            }
+      !this.state.authentication ?
+        ( // authenticate user
+          <div className={emailCss.auth}>
+            <p > {'Generated id for user. Try to memorize it'} </p>
+            <span onMouseLeave={(event) => { event.currentTarget.previousElementSibling.style.visibility = "hidden" }} onMouseOver={(event) => { { event.currentTarget.previousElementSibling.style.visibility = "visible" } }} > i </span>
+            <input value={this.state.currUser} type={'text'} ></input>
+            <button onClick={this.authenticateUser}> View Comments </button>
           </div>
-        </div>
+        )
+        :
+        ( // authentication complete
+          <div  >
+            {/* modal  */}
+            <div data-title={"modal"} className={emailCss.modal} onClick={this.clickModal}  >
 
-        <Banner name={'Email'} />
+              {/* modal close  */}
+              <span className={emailCss.modalClose} onClick={this.closeModal} > {'\u00D7'}  </span>
 
-        {/* user entry block */}
-        <form className={emailCss.input} data-lock={this.state.wrLock}>
+              {/* selection box window */}
+              <div className={emailCss.modalSelectionWindow} >
 
-          <input placeholder={'\t\tEnter username'} type='text' />
+                {/* images list border */}
+                {
+                  this.state.animalRecords.length == 0 ? '' :
+                    this.state.animalRecords.map((record) => (
+                      <img alt={record[0]} src={record[1]} onClick={this.clickAnimalButton} />
+                    ))
+                }
+              </div>
+            </div>
 
-          <textarea wrap={'hard'} placeholder="Please message me. I love feedback." rows="4" cols="40" name="comment" form="usrform"></textarea>
+            <Banner name={'Email'} />
 
-          <span>
-            <label> select spirit animal </label>
-            <br></br>
-            <img src={this.state.selectImageBase} onClick={this.openModal}></img>
-          </span>
+            {/* user entry block */}
+            <form className={emailCss.input} data-lock={this.state.wrLock}>
 
-          <input type="submit" value="submit" onClick={this.submitNewUser} />
+              <input placeholder={'\t\tEnter username'} type='text' />
 
-          <div>
-            <label> visible </label>
-            <button className={emailCss.colorButtonClass} onClick={this.visibleClick} />
-          </div>
-        </form>
+              <textarea wrap={'hard'} placeholder="Please message me. I love feedback." name="comment" form="usrform"></textarea>
+
+              <span>
+                <label> select spirit animal </label>
+                <br></br>
+                <img src={this.state.selectImageBase} onClick={this.openModal}></img>
+              </span>
+
+              <input type="submit" value="submit" onClick={this.submitNewUser} />
+
+              <div>
+                <label> visible </label>
+                <button className={emailCss.colorButtonClass} onClick={this.visibleClick} />
+              </div>
+            </form>
 
 
-        <div className={emailCss.optionMenu}>
-          <span>   </span>
-          <div>
-            <button onClick={this.sortUserName} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort names" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
-            <button onClick={this.sortDate} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort date" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
-          </div>
-        </div>
+            <div className={emailCss.optionMenu}>
+              <span>   </span>
+              <div>
+                <button onClick={this.sortUserName} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort names" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
+                <button onClick={this.sortDate} onMouseOver={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "sort date" }} onMouseOut={(event) => { event.currentTarget.parentElement.previousSibling.innerText = "" }} > </button>
+              </div>
+            </div>
 
-        <div className={emailCss.testimonialContainer} >
-          {
-            this.state.msgRecords.length == 0 ? '' :
+            <div className={emailCss.testimonialContainer} >
+              {
+                this.state.msgRecords.length == 0 ? '' :
 
-              this.state.msgRecords.map((record) => (
+                  this.state.msgRecords.map((record) => (
 
-                <div className={`${emailCss.testimonial} ${emailCss.compressTestimonial}`} onLoad={this.srcollHeightCheck}  >
-                  <div>
-                    <img src={this.state.imgURL == "" ? record[2] : this.state.imgURL} /> {/* image store */}
-                    <span> {record[1].slice(0, 10)} </span>                               {/* date */}
-                    <span> {`${record[0]}`} </span>                                       {/* testimonial */}
-                  </div>
+                    <div className={`${emailCss.testimonial} ${emailCss.compressTestimonial}`} onLoad={this.srcollHeightCheck}  >
+                      <div>
+                        <img src={this.state.imgURL == "" ? record[2] : this.state.imgURL} /> {/* image store */}
+                        <span> {record[1].slice(0, 10)} </span>                               {/* date */}
+                        <span> {`${record[0]}`} </span>                                       {/* testimonial */}
+                      </div>
 
-                  <div >
-                    <p> {record[3]}</p>
-                    <button onClick={this.expandTestimonial}>
-                      {
-                        Array.apply(null, Array(3)).map(() => (
-                          <span className={emailCss.expanderCompressOn}> {'\u2B24'} </span>
-                        ))
-                      }
-                    </button>
-                  </div>
-                </div>
-              ))
+                      <div  >
+                        <textarea data-cache={null} readOnly value={record[3]}></textarea>
+                        <button onClick={this.expandTestimonial}>
+                          {
+                            Array.apply(null, Array(3)).map(() => (
+                              <span className={emailCss.expanderCompressOn}> {'\u2B24'} </span>
+                            ))
+                          }
+                        </button>
+                      </div>
+                    </div>
+                  ))
 
-          }
-        </div>
+              }
+            </div>
 
-      </div >
+          </div >
+        )
     )
   }
 }
@@ -320,9 +415,9 @@ export default class Email extends React.Component {
 lock page previous user (cookie)
 ability to clear message
 send email when message added
+generate random number per user  ✅
   lock page after entry ✅
   opague entry section if lock ✅
   sort comment block by (user, data)✅
   comment expansion  ✅
-
 */

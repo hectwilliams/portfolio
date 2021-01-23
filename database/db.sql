@@ -1,4 +1,3 @@
-DROP DATABASE IF EXISTS sky;
 DELETE FROM EMAIL;
 DELETE FROM FAVORITELINKS;
 DELETE FROM SPIRIT_ANIMAL;
@@ -63,3 +62,10 @@ INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a butterfly", "https://stat
 INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a cat", "https://1.bp.blogspot.com/-u6MUGobk8uw/Xq-g4p-MXqI/AAAAAAAAYqU/6rb2tXgmiT44tbNpyC4JwLw5Ike9HUgWgCLcBGAsYHQ/s1600/destiny-wiens-oHm8scWafA0-unsplash.jpg");
 INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a fox", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Vulpes_vulpes_ssp_fulvus_6568085.jpg/1280px-Vulpes_vulpes_ssp_fulvus_6568085.jpg");
 INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("n/a", "https://static.thenounproject.com/png/409659-200.png");
+
+
+CREATE TABLE USERID (
+  ID INTEGER AUTO_INCREMENT NOT NULL,
+  CODENAME TEXT,
+  PRIMARY KEY (ID)
+);
