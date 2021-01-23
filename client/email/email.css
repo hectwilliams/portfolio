@@ -32,6 +32,7 @@
   text-align: center;
 }
 
+
 .auth > p
 {
   visibility: hidden;
@@ -44,7 +45,6 @@
   grid-column: 35 /  span 3;
   font-size: 12px;
   font-family: sans-serif;
-  font-family: fantasy ;
 } 
 
 .auth  > input 
