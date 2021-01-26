@@ -3,7 +3,6 @@ import Banner from '../../shared-components/Banner/banner';
 import homeCss from './home.css';
 import StoryInfo from '../../shared-components/StoryInfo/storyinfo';
 
-
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -15,7 +14,7 @@ export default class Home extends React.Component {
       storiesListLength: 9,
       shifterInUse: false,
 
-      linkNames: ['home', 'email', 'apps', 'links', 'about'],
+      linkNames: ['home', 'email', 'projects', 'links', 'about'],
     };
 
     this.onHoverStory = this.onHoverStory.bind(this);

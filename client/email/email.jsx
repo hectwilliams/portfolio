@@ -397,12 +397,5 @@ export default class Email extends React.Component {
 }
 
 /*
-lock page previous user (cookie)
-ability to clear message
-send email when message added
-generate random number per user  ✅
-  lock page after entry ✅
-  opague entry section if lock ✅
-  sort comment block by (user, data)✅
-  comment expansion  ✅
+send email when message added TODOemai
 */
