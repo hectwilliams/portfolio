@@ -1,0 +1,113 @@
+.container
+{
+  display: grid;
+  grid-template-columns: 400px 400px;
+  grid-template-rows: 400px 400px;
+  justify-content: center;
+  padding-top: 200px;
+}
+
+.container > button:nth-child(1)
+{
+  display: block;
+  background-color: aqua;
+  grid-row: 1/ span 1;
+  grid-column: 1 / span 1;
+  z-index: 0;
+
+}
+
+
+.container > button:nth-child(1) ::before
+{
+  display: block;
+  content: " Full Stack ";
+  text-align: center;
+  z-index: 0;
+}
+
+.container > button:nth-child(2)
+{   
+  display: block;
+  background-color: yellowgreen;
+  grid-row: 1/ span 1;
+  grid-column: 2 / span 1;
+}
+
+.container > button:nth-child(2) ::before
+{
+  display: block;
+  content: " Embedded/Hardware ";
+  text-align: center;
+}
+
+.container > button:nth-child(3)
+{   
+  display: block;
+  background-color: blanchedalmond;
+  grid-row: 2/ span 1;
+  grid-column: 1 / span 1;
+}
+
+.container > button:nth-child(3) ::before
+{
+  display: block;
+  content: " Code ";
+  text-align: center;
+}
+
+.container > button:nth-child(4)
+{    
+  display: block;
+  background-color: cornflowerblue;
+  grid-row: 2/ span 1;
+  grid-column: 2 / span 1;
+}
+
+.container > button:nth-child(4) ::before
+{
+  display: block;
+  content: " Special Projects ";
+  text-align: center;
+}
+
+.container > button:nth-of-type(n):hover
+{
+  border: groove 2px silver;
+  opacity: 0.6;
+  cursor: grab;
+}
+.container > button:nth-of-type(n):active
+{
+  background-color: gray;
+  cursor: grabbing;
+
+}
+.container > button:nth-of-type(n)
+{
+  z-index: 2;
+}
+
+.container > button:nth-child(5)
+{   
+  grid-row: 1/ span end;
+  grid-column: 1 / span end;
+  width: 35%;
+  height: 35%;
+  margin: auto;;  
+  z-index: 2;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+}
+
+.container > button:nth-of-type(5)
+{
+    z-index: 2;
+    cursor: none;
+}
+.container > button:nth-of-type(5):hover
+{
+  border: groove purple 2px;
+  opacity: 1;
+}
