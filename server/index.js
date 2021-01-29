@@ -6,6 +6,9 @@ const cors = require('cors');
 const port = 3001;
 const host = process.env.SERVER_HOSTNAME || 'localhost';
 const db = require('../database/index.js');
+const { readFile } = require('fs');
+const https = require('https');
+const http = require('http');
 
 app.locals.title = 'Portfolio';
 app.use(cors());
@@ -23,14 +26,13 @@ var metadata = [];
 
 const aboutRouter = express();  // app  -->   about-me  -->   router 
 const emailRouter = express();  // app --> email email 
-const appsRouter = express();  // app --> apps email 
-const linksRouter = express();
+const projectRouter = express();  // app --> project 
+const linksRouter = express();  // app --> link
 
 app.use('/about.html', aboutRouter);
 app.use('/links.html', linksRouter);
 app.use('/email.html', emailRouter);
-
-// aboutme basepath = http://localhost:3001/about.html
+app.use('/projects.html', projectRouter);
 
 aboutRouter.get('/data', (req, res) => {
   data.length = metadata.length = 0;
@@ -153,23 +155,43 @@ emailRouter.get('/sortDate', (req, res) => {
     })
 })
 
-// emailRouter.get('/codeCheck/:id', (req, res) => {
+// links basepath = http://localhost:3001/projects.html
 
-//   db.sessionsql
-//     .then((schema) => {
-//       return schema.getTable('email');
-//     })
-//     .then((table) => {
-//       return table.select().
-//         where('userid like :param').
-//         bind('param', `${req.params.id}`).
-//         execute()
-//         .then(retTableSelectData => {
-//           return res.send({ isvalid: retTableSelectData.fetchAll().length == 0 });
-//         })
-//     })
+projectRouter.get('/pickSize', (req, res) => {
+  let files = ['code', 'embedded', 'fullstack', 'project'];
+  let runner;
+  let obj = {};
 
-//     .catch(err => {
-//       res.status(404).send();
-//     });
-// })
+  let callback = (index) => {
+    let currFile = files[index];
+    let path;
+    clearInterval(runner);
+
+    if (index >= files.length) {
+      res.send(obj)
+    }
+
+    if (index < files.length) {
+      path = `http://localhost:3001/assets/images/${currFile}/meta.json`;
+      http.get(path, (httpResponse) => {
+        const { statusCode } = httpResponse;
+
+        if (statusCode != 200) {
+          res.status(404).send();
+          return;
+        }
+
+        httpResponse.addListener("data", (rawDataChunk) => {
+          obj[currFile] = JSON.parse(rawDataChunk.toString()).fileCount;
+        });
+
+        httpResponse.addListener("end", () => {
+          runner = setTimeout(callback, 0, index + 1);
+        })
+
+      });
+
+    }
+  };
+  runner = setTimeout(callback, 0, 0);
+})
