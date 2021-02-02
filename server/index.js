@@ -188,9 +188,7 @@ projectRouter.get('/pickSize', (req, res) => {
         httpResponse.addListener("end", () => {
           runner = setTimeout(callback, 0, index + 1);
         })
-
       });
-
     }
   };
   runner = setTimeout(callback, 0, 0);

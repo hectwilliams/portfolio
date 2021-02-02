@@ -10,11 +10,11 @@ export default class Projects extends React.Component {
     this.setImage = this.setImage.bind(this);
     this.state = {
       currMenu: "",
-      menuMeta: {}
+      menuMeta: {},
+      numElementPerRow: 20
     }
     this.shiftLeft = this.shiftLeft.bind(this);
     this.shiftRight = this.shiftRight.bind(this);
-    this.colorMe = this.colorMe.bind(this);
   }
 
   setImage(event) {
@@ -39,6 +39,7 @@ export default class Projects extends React.Component {
       }
     }
 
+    // Fetch size of mode
     fetch(`${window.location.href}/pickSize`, { method: 'GET' })
       .then((response) => {
         return response.json()
@@ -51,26 +52,25 @@ export default class Projects extends React.Component {
 
   shiftLeft(event) {
     let arr = [];
-    let currNode, swappedNode;
-    let NumOfSwappedNodes = 99;
-    let parent = event.currentTarget.parentElement.firstChild;
+    let parent = event.currentTarget.parentElement.firstElementChild;
     let windowLength = 5;
-
-    console.log(parent.firstChild);
+    let tmp;
 
     for (let i = 0; i < windowLength; i++) {
-      arr.push(parent.removeChild(parent.firstChild));
+      tmp = parent.removeChild(parent.firstElementChild);
+      console.log(tmp);
+      arr.push(tmp);
     }
 
     for (let i = 0; i < windowLength; i++) {
       parent.appendChild(arr.shift());
     }
+
   }
 
   shiftRight(event) {
-    let currNode, swappedNode, prevNode;
-    let NumOfSwappedNodes = 100;
-    let parent = event.currentTarget.parentElement.firstChild;
+    let currNode;
+    let parent = event.currentTarget.parentElement.firstElementChild;
     let windowLength = 5;
     let arr = [];
 
@@ -85,21 +85,23 @@ export default class Projects extends React.Component {
     }
   }
 
-  colorMe(event) {
-    let currNode = event.currentTarget.parentElement.children[2].firstChild.firstChild;
-    let genRandomColor = () => {
-      let arr = [];
+  /* not an event */
+  getImageFile(index) {
+    let pos;
 
-      for (let i = 0; i < 3; i++) {
-        arr.push(Math.floor(Math.random() * 256));
-      }
-      return `rgb( ${arr.toString()})`;
+    if (this.state.currMenu == "") {
+      return;
     }
 
-    for (let i = 0; i < 100; i++) {
-      currNode.children[i].style.backgroundColor = genRandomColor();
+    pos = index / 5;
+
+    if (pos < this.state.menuMeta[this.state.currMenu]) {
+      return `http://localhost:3001/assets/images/${this.state.currMenu}/${pos}.jpg`;
     }
+
+    return `http://localhost:3001/assets/images/${this.state.currMenu}/null.png`;
   }
+
 
   render() {
 
@@ -113,7 +115,7 @@ export default class Projects extends React.Component {
             // {/* Quadrants  */}
             Array.apply(null, Array(4)).map((ret, index) => (
               <button data-id={index} onClick={this.setImage}>
-                <div  >  </div>  {/*  dummy div*/}
+                <div>  </div>  {/*  dummy div*/}
               </button>
             ))
           }
@@ -122,34 +124,27 @@ export default class Projects extends React.Component {
         </div>
 
         <div className={projectCss.container2}>
+          {
+            !!this.state.menuMeta[this.state.currMenu] == false ? "" :   /*   this.state.menuMeta[this.state.currMenu] = length of elements to display    */
 
-          <div className={projectCss.slideContainer}>
-            <span>
-              {
-                Array.apply(null, Array(100)).map((ele, index) => (
-                  this.state.currMenu == "" ? "" : <span >
+              Array.call(null, Array(Math.ceil(this.state.menuMeta[this.state.currMenu] / this.state.numElementPerRow))).map((notUsed, currRow) => (
+
+                <div className={projectCss.slideContainer}>
+                  <span> {/* selection slider */}
                     {
-                      (index % 5 == 0) ?
-                        <img
-                          src={`http://localhost:3001/assets/images/${this.state.currMenu}/${((index / 5) < this.state.menuMeta[this.state.currMenu]) ? (index / 5) + '.jpg' : 'null.png'}`}
-                          data-index={index}
-                          className={(index % 5 == 0) ? projectCss.movieBox : ""}
-                        />
-                        : ""
+                      Array.apply(null, Array(100)).map((ele, index) => (
+                        <span >
+                          { (index % 5 == 0) ? <img src={this.getImageFile(currRow * this.state.numElementPerRow + (5 /* 5 = contigious span window length*/ * index))} className={projectCss.movieBox} /> : ""}
+                        </span>
+                      ))
                     }
                   </span>
-                ))
-              }
-            </span>
-
-            <button onClick={this.shiftRight}  > {'>'} </button>
-            <button onClick={this.shiftLeft} > {'<'} </button>
-          </div>
-
-
+                  <button onClick={this.shiftRight}  > {'>'} </button>
+                  <button onClick={this.shiftLeft} > {'<'} </button>
+                </div>
+              ))
+          }
         </div>
-
-
       </div >
     );
   }
