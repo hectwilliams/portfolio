@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createElement } from 'react';
 import Banner from '../shared-components/Banner/banner';
 import projectCss from './Projects.css';
 
@@ -9,12 +9,18 @@ export default class Projects extends React.Component {
     super(props);
     this.setImage = this.setImage.bind(this);
     this.state = {
-      currMenu: "",
-      menuMeta: {},
-      numElementPerRow: 20
+      currMode: "",
+      storage: {},
+      numElementPerRow: 20,
+      rcvd: false,
+      nodeId: -1
     }
     this.shiftLeft = this.shiftLeft.bind(this);
     this.shiftRight = this.shiftRight.bind(this);
+    this.showMe = this.showMe.bind(this);
+    this.hideMe = this.hideMe.bind(this);
+    this.showModal = this.showModal.bind(this);
+
   }
 
   setImage(event) {
@@ -32,22 +38,29 @@ export default class Projects extends React.Component {
 
       regex = /(?<=-)\w+/.exec(file);
 
-      this.setState({ currMenu: regex });
+      this.setState({ currMode: regex });
 
       if (file) {
         styleOfTarget.backgroundImage = `url('http://localhost:3001/assets/images/${file}')`;
       }
     }
 
-    // Fetch size of mode
-    fetch(`${window.location.href}/pickSize`, { method: 'GET' })
-      .then((response) => {
-        return response.json()
-      })
-      .then((retJson) => {
-        this.setState({ menuMeta: retJson })
-      })
-      .catch(err => console.log(err.stack))
+    // fetch server once 
+    if (!this.state.rcvd) {
+      fetch(`${window.location.href}/pickSize`, { method: 'GET' })
+        .then((response) => {
+          return response.json()
+        })
+        .then((retJson) => {
+          console.log(retJson);
+          return this.setState({ storage: retJson })
+        })
+        .then(() => {
+          this.setState({ rcvd: true });
+        })
+        .catch(err => console.log(err.stack))
+    }
+
   }
 
   shiftLeft(event) {
@@ -86,22 +99,66 @@ export default class Projects extends React.Component {
   }
 
   /* not an event */
-  getImageFile(index) {
+  getImageFile(row, col, element) {
     let pos;
 
-    if (this.state.currMenu == "") {
+    if (this.state.currMode == "") {
       return;
     }
 
-    pos = index / 5;
+    pos = row + col;
 
-    if (pos < this.state.menuMeta[this.state.currMenu]) {
-      return `http://localhost:3001/assets/images/${this.state.currMenu}/${pos}.jpg`;
+    if (pos < this.state.storage[this.state.currMode].fileCount) {
+      return `http://localhost:3001/assets/images/${this.state.currMode}/${pos}.jpg`;
     }
 
-    return `http://localhost:3001/assets/images/${this.state.currMenu}/null.png`;
+    return `http://localhost:3001/assets/images/${this.state.currMode}/null.png`;
+
   }
 
+  /* not event  */
+  getFile(index) {
+    let obj = this.state.storage[this.state.currMode];
+    if (index >= obj.fileCount) {
+      return "";
+    }
+    return obj.files[index].name;
+  }
+
+  showMe(event) {
+    let text = event.currentTarget.firstElementChild.firstElementChild.innerText;
+    if (text.length != 0) {
+      event.currentTarget.children[1].innerText = text;
+      event.currentTarget.children[1].style.opacity = 1;
+    }
+  }
+
+  hideMe(event) {
+    event.currentTarget.children[1].innerText = "";
+    event.currentTarget.children[1].style.opacity = 0;
+  }
+
+  showModal(event) {
+    let node = document.getElementsByClassName(projectCss.modal)[0];
+    let activeNode = (event.currentTarget.parentElement);
+    let currID = 0;
+
+    for (let i = 0; activeNode != activeNode.parentElement.children[i]; i++) {
+      currID++;
+    }
+    this.setState({ nodeId: Math.floor(currID / 5) });
+    node.style.visibility = "visible";
+  }
+
+
+  numOfLines(str) {
+    let regx = str.match(/\n/g);
+
+    if (regx) {
+      return regx.length + 1;
+    }
+    return 0;
+  }
 
   render() {
 
@@ -125,27 +182,152 @@ export default class Projects extends React.Component {
 
         <div className={projectCss.container2}>
           {
-            !!this.state.menuMeta[this.state.currMenu] == false ? "" :   /*   this.state.menuMeta[this.state.currMenu] = length of elements to display    */
+            (!this.state.rcvd) ? "" :
 
-              Array.call(null, Array(Math.ceil(this.state.menuMeta[this.state.currMenu] / this.state.numElementPerRow))).map((notUsed, currRow) => (
+              (!!this.state.storage[this.state.currMode].fileCount == false) ? "" :
 
-                <div className={projectCss.slideContainer}>
-                  <span> {/* selection slider */}
-                    {
-                      Array.apply(null, Array(100)).map((ele, index) => (
-                        <span >
-                          { (index % 5 == 0) ? <img src={this.getImageFile(currRow * this.state.numElementPerRow + (5 /* 5 = contigious span window length*/ * index))} className={projectCss.movieBox} /> : ""}
-                        </span>
-                      ))
-                    }
-                  </span>
-                  <button onClick={this.shiftRight}  > {'>'} </button>
-                  <button onClick={this.shiftLeft} > {'<'} </button>
-                </div>
-              ))
+                Array.call(null, Array(Math.ceil(this.state.storage[this.state.currMode].fileCount / this.state.numElementPerRow))).map((notUsed, currRow) => (
+
+                  <div className={projectCss.slideContainer}>
+                    <span> {/* selection slider */}
+                      {
+                        Array.apply(null, Array(100)).map((ele, index) => (
+                          <span >
+                            { (index % 5 != 0) ? "" :
+                              <button onClick={this.showModal} onMouseEnter={this.showMe} onMouseLeave={this.hideMe} >
+                                <div className={projectCss.card}>
+                                  <label> {this.getFile(currRow * this.state.numElementPerRow + Math.ceil((index / 100) * 20), this)} </label>
+                                </div>
+
+                                <label className={projectCss.showLabel}>  </label>
+                              </button>
+                            }
+                          </span>
+                        ))
+                      }
+                    </span>
+                    <button onClick={this.shiftRight}  > {'>'} </button>
+                    <button onClick={this.shiftLeft} > {'<'} </button>
+                  </div>
+                ))
           }
         </div>
+
+        {
+          (!this.state.rcvd) ? "" :
+            <div className={projectCss.modal}>
+
+              <div>
+                <span
+                  onClick={(e) => {
+                    e.currentTarget.parentElement.parentElement.style.visibility = "hidden";
+                    this.setState({ nodeId: -1 });
+                  }}
+                > &times;
+                </span>
+
+                <span onClick={(e) => {
+
+                  if (e.currentTarget.parentElement.parentElement.style.width != "99.4%") {
+                    // change size 
+                    e.currentTarget.parentElement.parentElement.style.width = "99.4%";
+                    // update icon
+                    e.currentTarget.innerHTML = '\u25A3';
+                  }
+
+                  else if (e.currentTarget.parentElement.parentElement.style.width == "99.4%") {
+                    // change size 
+                    e.currentTarget.parentElement.parentElement.style.width = "50%";
+                    // update icon
+                    e.currentTarget.innerHTML = '\u25A2';
+                  }
+
+                }}
+                > &#x25A2; </span>
+
+              </div>
+
+              {
+                (this.state.nodeId == -1) ? "" :
+                  <div>
+                    <h2 className={projectCss.ptitle}> {this.state.storage[this.state.currMode].files[this.state.nodeId].name}</h2>
+                    <hr></hr>
+                    <p> {this.state.storage[this.state.currMode].files[this.state.nodeId].description}</p>
+                    <hr></hr>
+
+                    {
+                      simulateServerData.map((arrElement) => (
+                        <div>
+                          {
+                            arrElement[0].match(/img/) ? <img src={'http://localhost:3001/assets/images/bg.jpg'} /> :
+                              arrElement[0].match(/text/) ? <p> {arrElement[1]} </p> :
+                                arrElement[0].match(/code/) ? <textarea cols={100} rows={this.numOfLines(arrElement[1])} value={arrElement[1]} spellCheck={false} readOnly>   </textarea> : ""
+                          }
+
+                        </div>
+                      ))
+                    }
+
+
+                  </div>
+              }
+            </div>
+
+        }
+
+
+
       </div >
     );
   }
 }
+
+let simulateServerData = [
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+
+  ["text", "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi magni ipsa assumenda temporibus facere voluptatum cupiditate ut repellendus repudiandae, saepe reprehenderit quis debitis numquam dignissimos, dolorem incidunt, ducimus ex. Earum."],
+  ["img", "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Neque odio eum eos, cum similique quo enim, obcaecati, officiis veniam tenetur quaerat quis culpa molestiae sunt blanditiis nihil vel adipisci deserunt."],
+  ["img", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro reiciendis praesentium sequi? Debitis nostrum nesciunt corrupti nobis quos autem, explicabo necessitatibus illo, itaque blanditiis, error libero fuga atque fugit et."],
+
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+  ["text", "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi magni ipsa assumenda temporibus facere voluptatum cupiditate ut repellendus repudiandae, saepe reprehenderit quis debitis numquam dignissimos, dolorem incidunt, ducimus ex. Earum."],
+  ["img", "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Neque odio eum eos, cum similique quo enim, obcaecati, officiis veniam tenetur quaerat quis culpa molestiae sunt blanditiis nihil vel adipisci deserunt."],
+  ["img", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro reiciendis praesentium sequi? Debitis nostrum nesciunt corrupti nobis quos autem, explicabo necessitatibus illo, itaque blanditiis, error libero fuga atque fugit et."],
+
+
+  ["code", `#include <stdio.h>
+  int main()
+  {
+  printf("hello world")
+  }`],
+
+];

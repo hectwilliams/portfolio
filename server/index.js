@@ -182,13 +182,15 @@ projectRouter.get('/pickSize', (req, res) => {
         }
 
         httpResponse.addListener("data", (rawDataChunk) => {
-          obj[currFile] = JSON.parse(rawDataChunk.toString()).fileCount;
+          obj[currFile] = JSON.parse(rawDataChunk.toString());
         });
 
         httpResponse.addListener("end", () => {
           runner = setTimeout(callback, 0, index + 1);
         })
+
       });
+
     }
   };
   runner = setTimeout(callback, 0, 0);
