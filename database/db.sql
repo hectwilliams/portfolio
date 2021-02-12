@@ -2,6 +2,8 @@ DELETE FROM EMAIL;
 DELETE FROM FAVORITELINKS;
 DELETE FROM SPIRIT_ANIMAL;
 DELETE FROM ABOUTME;
+DELETE FROM PAGE_LIST;
+DELETE FROM PAGE_RECORDS;
 
 CREATE TABLE EMAIL (
   ID INT AUTO_INCREMENT,
@@ -44,7 +46,6 @@ INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(5, '2020', "Historic year f
 INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(6, '2020', "Covid 19 shutdown forced me and my partner to spend alot of time at home. I'm a homebody but I am also an adventurous. I spent time finding some new games on my XBOX. I'm so proud of video game developers are always creating unique diverse games. I'm not sure what I would do without video games(there are board games...duh!)" );
 INSERT INTO `aboutme` (`ID`, `YEAR`, `DATA`)  VALUES(7, '2020',  "Presently while I type this, Penn State(🔵⚪️🦁) is the worst team in the Big 10 Conference sitting at 0-3");
 
-
 CREATE TABLE SPIRIT_ANIMAL (
   ID INTEGER AUTO_INCREMENT NOT NULL,
   NAME TEXT,
@@ -54,14 +55,19 @@ CREATE TABLE SPIRIT_ANIMAL (
 
 INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES("a bat", "https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/tnc_34284690_1640x1025.jpg?crop=0,0,1640,1230&wid=820&hei=615&scl=2.0" );
 INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES("a bear", "https://images.pexels.com/photos/158109/kodiak-brown-bear-adult-portrait-wildlife-158109.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" );
-INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a butterfly", "https://static.independent.co.uk/s3fs-public/thumbnails/image/2020/01/07/13/monarch-butterfly.jpg");
-INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a cat", "https://1.bp.blogspot.com/-u6MUGobk8uw/Xq-g4p-MXqI/AAAAAAAAYqU/6rb2tXgmiT44tbNpyC4JwLw5Ike9HUgWgCLcBGAsYHQ/s1600/destiny-wiens-oHm8scWafA0-unsplash.jpg");
-INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("a fox", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Vulpes_vulpes_ssp_fulvus_6568085.jpg/1280px-Vulpes_vulpes_ssp_fulvus_6568085.jpg");
-INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`) VALUES ("n/a", "https://static.thenounproject.com/png/409659-200.png");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES ("a butterfly", "https://static.independent.co.uk/s3fs-public/thumbnails/image/2020/01/07/13/monarch-butterfly.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES ("a cat", "https://1.bp.blogspot.com/-u6MUGobk8uw/Xq-g4p-MXqI/AAAAAAAAYqU/6rb2tXgmiT44tbNpyC4JwLw5Ike9HUgWgCLcBGAsYHQ/s1600/destiny-wiens-oHm8scWafA0-unsplash.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES ("a fox", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Vulpes_vulpes_ssp_fulvus_6568085.jpg/1280px-Vulpes_vulpes_ssp_fulvus_6568085.jpg");
+INSERT INTO `SPIRIT_ANIMAL` (`NAME`, `URL`)  VALUES ("n/a", "https://static.thenounproject.com/png/409659-200.png");
 
-
-CREATE TABLE USERID (
+CREATE TABLE PAGE_LIST  (
   ID INTEGER AUTO_INCREMENT NOT NULL,
-  CODENAME TEXT,
+  NAME TEXT,
   PRIMARY KEY (ID)
+);
+
+CREATE TABLE PAGE_RECORDS (
+  TYPE ENUM('code', 'image', 'text'),
+  ID INTEGER,
+  FOREIGN KEY (ID) REFERENCES PAGE_LIST(ID)
 );
