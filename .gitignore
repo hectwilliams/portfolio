@@ -3,3 +3,4 @@
 */bundles/*
 .DS_Store
 package-lock.json
+hidefile*
