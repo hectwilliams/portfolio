@@ -13,7 +13,8 @@ export default class Projects extends React.Component {
       storage: {},
       numElementPerRow: 20,
       rcvd: false,
-      nodeId: -1
+      nodeId: -1,
+      pageState: []
     }
     this.shiftLeft = this.shiftLeft.bind(this);
     this.shiftRight = this.shiftRight.bind(this);
@@ -30,15 +31,15 @@ export default class Projects extends React.Component {
 
     if (styleOfTarget) {
       file = {
-        0: 'icon-fullstack.png',
+        0: 'icon-full_stack.png',
         1: 'icon-embedded.png',
         2: 'icon-code.png',
-        3: 'icon-project.jpg'
+        3: 'icon-special_projects.jpg'
       }[event.currentTarget.dataset.id]
 
       regex = /(?<=-)\w+/.exec(file);
 
-      this.setState({ currMode: regex });
+      this.setState({ currMode: regex[0] });
 
       if (file) {
         styleOfTarget.backgroundImage = `url('http://localhost:3001/assets/images/${file}')`;
@@ -47,38 +48,32 @@ export default class Projects extends React.Component {
 
     // fetch server once 
     if (!this.state.rcvd) {
-      fetch(`${window.location.href}/pickSize`, { method: 'GET' })
+      fetch(`${window.location.href}/selectTable`, { method: 'GET' })
         .then((response) => {
           return response.json()
         })
         .then((retJson) => {
-          console.log(retJson);
           return this.setState({ storage: retJson })
         })
         .then(() => {
           this.setState({ rcvd: true });
         })
-        .catch(err => console.log(err.stack))
+        .catch(err => {  /* console.log(err.stack) */ })
     }
-
   }
 
   shiftLeft(event) {
     let arr = [];
-    let parent = event.currentTarget.parentElement.firstElementChild;
     let windowLength = 5;
-    let tmp;
+    let parent = event.currentTarget.parentElement.firstElementChild;
 
     for (let i = 0; i < windowLength; i++) {
-      tmp = parent.removeChild(parent.firstElementChild);
-      console.log(tmp);
-      arr.push(tmp);
+      arr.push(parent.removeChild(parent.firstElementChild));
     }
 
     for (let i = 0; i < windowLength; i++) {
       parent.appendChild(arr.shift());
     }
-
   }
 
   shiftRight(event) {
@@ -99,7 +94,7 @@ export default class Projects extends React.Component {
   }
 
   /* not an event */
-  getImageFile(row, col, element) {
+  getImageFile(row, col) {
     let pos;
 
     if (this.state.currMode == "") {
@@ -113,12 +108,12 @@ export default class Projects extends React.Component {
     }
 
     return `http://localhost:3001/assets/images/${this.state.currMode}/null.png`;
-
   }
 
   /* not event  */
   getFile(index) {
     let obj = this.state.storage[this.state.currMode];
+
     if (index >= obj.fileCount) {
       return "";
     }
@@ -142,20 +137,44 @@ export default class Projects extends React.Component {
     let node = document.getElementsByClassName(projectCss.modal)[0];
     let activeNode = (event.currentTarget.parentElement);
     let currID = 0;
+    let modalPage = event.currentTarget.firstElementChild.firstElementChild.innerHTML.trim();
+    let tableid;
 
-    for (let i = 0; activeNode != activeNode.parentElement.children[i]; i++) {
-      currID++;
+    tableid = {
+      code: 2,
+      embedded: 1,
+      full_stack: 0,
+      special_projects: 3
+    }[this.state.currMode];
+
+    if (!tableid) {
+      return;
     }
-    this.setState({ nodeId: Math.floor(currID / 5) });
-    node.style.visibility = "visible";
-  }
 
+    fetch(`${window.location.href}/fieldEquals_${modalPage + '-' + this.state.currMode}`, { method: 'GET' })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+
+        this.setState({ pageState: data })
+
+        for (let i = 0; activeNode != activeNode.parentElement.children[i]; i++) {
+          currID++;
+        }
+        this.setState({ nodeId: Math.floor(currID / 5) });
+        node.style.visibility = "visible";
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
 
   numOfLines(str) {
     let regx = str.match(/\n/g);
 
     if (regx) {
-      return regx.length + 1;
+      return regx.length + 2;
     }
     return 0;
   }
@@ -228,14 +247,14 @@ export default class Projects extends React.Component {
 
                 <span onClick={(e) => {
 
-                  if (e.currentTarget.parentElement.parentElement.style.width != "99.4%") {
+                  if (e.currentTarget.parentElement.parentElement.style.width != "99.5%") {
                     // change size 
-                    e.currentTarget.parentElement.parentElement.style.width = "99.4%";
+                    e.currentTarget.parentElement.parentElement.style.width = "99.5%";
                     // update icon
                     e.currentTarget.innerHTML = '\u25A3';
                   }
 
-                  else if (e.currentTarget.parentElement.parentElement.style.width == "99.4%") {
+                  else if (e.currentTarget.parentElement.parentElement.style.width == "99.5%") {
                     // change size 
                     e.currentTarget.parentElement.parentElement.style.width = "50%";
                     // update icon
@@ -244,7 +263,6 @@ export default class Projects extends React.Component {
 
                 }}
                 > &#x25A2; </span>
-
               </div>
 
               {
@@ -254,20 +272,17 @@ export default class Projects extends React.Component {
                     <hr></hr>
                     <p> {this.state.storage[this.state.currMode].files[this.state.nodeId].description}</p>
                     <hr></hr>
-
                     {
-                      simulateServerData.map((arrElement) => (
+                      this.state.pageState.map((arrElement) => (
                         <div>
                           {
-                            arrElement[0].match(/img/) ? <img src={'http://localhost:3001/assets/images/bg.jpg'} /> :
+                            arrElement[0].match(/image/) ? <img src={arrElement[1]} /> :
                               arrElement[0].match(/text/) ? <p> {arrElement[1]} </p> :
                                 arrElement[0].match(/code/) ? <textarea cols={100} rows={this.numOfLines(arrElement[1])} value={arrElement[1]} spellCheck={false} readOnly>   </textarea> : ""
                           }
-
                         </div>
                       ))
                     }
-
 
                   </div>
               }

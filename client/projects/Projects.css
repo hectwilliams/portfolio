@@ -248,7 +248,7 @@
   top: 0;
   right: 0;
   border: groove rgb(95, 93, 95) 4px;
-  margin-top: 1em;
+  margin-top: 0.8em;
   overflow-y: scroll;
 }
 
@@ -322,4 +322,12 @@
 .modal > div:nth-of-type(2) > div > textarea 
 {
   resize: none;
+  width: 800px;
+  outline: none;
+}
+
+.modal > div:nth-of-type(2) > div > p 
+{
+  width: 800px;
+
 }
