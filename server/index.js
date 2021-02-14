@@ -9,11 +9,12 @@ const db = require('../database/index.js');
 const { readFile } = require('fs');
 const https = require('https');
 const http = require('http');
+const databaseLoaded = false;
 
 app.locals.title = 'Portfolio';
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, '..', 'public')));
 app.listen(port, host, () => {
   /* connected */
@@ -157,41 +158,83 @@ emailRouter.get('/sortDate', (req, res) => {
 
 // links basepath = http://localhost:3001/projects.html
 
-projectRouter.get('/pickSize', (req, res) => {
-  let files = ['code', 'embedded', 'fullstack', 'project'];
-  let runner;
-  let obj = {};
+projectRouter.get('/selectTable', (req, res) => {
+  let tables = ['code', 'embedded', 'full_stack', 'special_projects'];
 
-  let callback = (index) => {
-    let currFile = files[index];
-    let path;
-    clearInterval(runner);
+  db.sessionsql
+    .then((schema) => {
+      return new Promise((resolve) => {
+        let promises = [];
 
-    if (index >= files.length) {
-      res.send(obj)
-    }
+        tables.forEach((tableName, i) => {
+          let obj = { directoryName: "", fileCount: 0, files: [] };
+          let table = schema.getTable(tableName);
 
-    if (index < files.length) {
-      path = `http://localhost:3001/assets/images/${currFile}/meta.json`;
-      http.get(path, (httpResponse) => {
-        const { statusCode } = httpResponse;
+          table
+            .select('name', 'descr')
+            .execute()
+            .then(retTable => {
+              obj.files = retTable.fetchAll()
+              obj.fileCount = obj.files.length;
+              obj.directoryName = tableName;
 
-        if (statusCode != 200) {
-          res.status(404).send();
-          return;
-        }
 
-        httpResponse.addListener("data", (rawDataChunk) => {
-          obj[currFile] = JSON.parse(rawDataChunk.toString());
-        });
+              obj.files = obj.files.map(arr => {
+                return { 'name': arr[0], 'description': arr[1] };
+              });
 
-        httpResponse.addListener("end", () => {
-          runner = setTimeout(callback, 0, index + 1);
+              promises.push(obj);
+
+              if (promises.length == 4) {
+                resolve(promises)
+              }
+            })
         })
+      })
+    })
 
+    // send data to client 
+    .then(data => {
+      let obj = {};
+      data.forEach(ele => {
+        obj[ele.directoryName] = {
+          'fileCount': ele.fileCount,
+          'files': ele.files
+        };
       });
+      res.send(obj)
+    })
+    .catch(err => {
+      // console.log(err);
+    })
 
-    }
-  };
-  runner = setTimeout(callback, 0, 0);
 })
+
+projectRouter.get(/fieldEquals_?/, (req, res) => {
+  let regex = req.url.match(/[^\/fieldEquals_].+/);
+
+  if (regex) {
+    regex = decodeURI(regex[0].split('-')).split(',');
+  }
+
+  if (regex[0].length == 0) {
+    return res.status(404).send();
+  }
+
+  db.sessionsql
+    .then((schema) => {
+      let table = schema.getTable(regex[1] + '_records')
+      return table
+        .select('name', 'type', 'position', 'data')
+        .where('name like :param')
+        .bind('param', regex[0])
+        .execute()
+        .then(retTable => {
+          res.send(JSON.stringify(retTable.fetchAll().map(ele => { return [ele[1] /*type*/, ele[3] /*data*/] })));
+        })
+        .catch(err => {
+          res.status(404).send();
+        })
+    })
+
+});
