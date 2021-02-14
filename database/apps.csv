@@ -1,0 +1,5 @@
+Name,Mode,Description
+Bubble Sort,code,"""Also known as sinking sort, repeatedly stepping through list comparing ""adjacent"" elements and swapping if adjacent elements are out of order.
+Have fub"""
+Selection Sort,code,"""Sorts by repeatedly finding min elements and swapping with frontmost out of order element"""
+Insertion Sort,code,"""Sorts by repeatedly moving out of order min elements to front of list while sustaining order"""
