@@ -6,10 +6,9 @@ const cors = require('cors');
 const port = 3001;
 const host = process.env.SERVER_HOSTNAME || 'localhost';
 const db = require('../database/index.js');
-const { readFile } = require('fs');
 const https = require('https');
 const http = require('http');
-const databaseLoaded = false;
+const fs = require('fs');
 
 app.locals.title = 'Portfolio';
 app.use(cors());
@@ -27,13 +26,15 @@ var metadata = [];
 
 const aboutRouter = express();  // app  -->   about-me  -->   router 
 const emailRouter = express();  // app --> email email 
-const projectRouter = express();  // app --> project 
+const projectRouter = express();  // app --> project git
 const linksRouter = express();  // app --> link
+const homeRouter = express(); // app --> home
 
 app.use('/about.html', aboutRouter);
 app.use('/links.html', linksRouter);
 app.use('/email.html', emailRouter);
 app.use('/projects.html', projectRouter);
+app.use('/home.html', homeRouter);
 
 aboutRouter.get('/data', (req, res) => {
   data.length = metadata.length = 0;
@@ -237,4 +238,46 @@ projectRouter.get(/fieldEquals_?/, (req, res) => {
         })
     })
 
+});
+
+// home basepath = http://localhost:3001/home.html
+
+homeRouter.get('/readVideos', (req, res) => {
+  const jsonfile = path.resolve(__dirname, "..", "public", "assets", "videos", "meta.json");
+  const dir = jsonfile.substr(0, jsonfile.lastIndexOf('\\'));
+  const obj = [];
+
+  fs.readdir(dir, "utf8", (err, fileList) => {
+    if (err) {
+      res.status(404).send();
+    }
+    else {
+
+      new Promise((resolve, reject) => {
+        let files = fileList.filter((f) => { return f.match(/vid.*/) != null });
+
+        files.forEach((file) => {
+          let currFile = path.resolve(dir, file);
+          fs.stat(currFile, "utf8", (err, stats) => {
+            if (err) {
+              reject();
+            }
+            else {
+              obj.push({ fileName: file, date: stats.birthtime.toISOString().substr(0, stats.birthtime.toISOString().lastIndexOf("T")) });
+              if (obj.length == 2) {
+                resolve(obj);
+              }
+            }
+          })
+        });
+      })
+        .then((data) => {
+          res.send(data);
+        })
+        .catch(() => {
+          res.status(404).send();
+        });
+
+    }
+  })
 });

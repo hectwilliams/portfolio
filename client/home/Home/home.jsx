@@ -1,7 +1,6 @@
 import React from 'react';
 import Banner from '../../shared-components/Banner/banner';
 import homeCss from './home.css';
-import StoryInfo from '../../shared-components/StoryInfo/storyinfo';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -9,18 +8,21 @@ export default class Home extends React.Component {
     this.state = {
 
       /* REQUEST STORIES FROM DATABASE */
-      collection: [],
       storiesPosition: 0,
       storiesListLength: 9,
       shifterInUse: false,
-
+      movieSelected: false,
+      collection: [],
       linkNames: ['home', 'email', 'projects', 'links', 'about'],
+      selectedVideo: {}
     };
 
-    this.onHoverStory = this.onHoverStory.bind(this);
     this.onClickShifter = this.onClickShifter.bind(this);
-
+    this.gotoNextPage = this.gotoNextPage.bind(this);
+    this.showVideo = this.showVideo.bind(this);
+    this.closeVideo = this.closeVideo.bind(this);
   }
+
 
   render() {
     return (
@@ -31,85 +33,84 @@ export default class Home extends React.Component {
 
         <div className={homeCss.container}>
 
-          {/* profile picture embeddded within img container */}
           <div className={homeCss.imgContainer}>
 
-            {/* public social media icons  */}
-            <div >
+            {/* Image */}
+            <div> </div>
 
-              <div>
-
-                <a href={'https://www.linkedin.com/in/hectwilliams'}  >
-
-                  <button title={"linkedin-icon"}></button>
-                </a>
-
-                <a>
-                  <button title={"facebook-icon"}></button>
-                </a>
-
-                <a>
-                  <button title={"twitter-icon"}></button>
-                </a>
-
-                <a href={'https://hectwilliams.medium.com/'}  >
-                  <button title={"medium-icon"}> </button>
-                </a>
-
-              </div>
-
+            {/*  Social Media */}
+            <div>
+              {/* public social media icons  */}
+              <a href={'https://www.linkedin.com/in/hectwilliams'}  >
+                <button title={"linkedin-icon"}></button>
+              </a>
+              <a>
+                <button title={"facebook-icon"}></button>
+              </a>
+              <a>
+                <button title={"twitter-icon"}></button>
+              </a>
+              <a href={'https://hectwilliams.medium.com/'}  >
+                <button title={"medium-icon"}> </button>
+              </a>
             </div>
 
-            {/* story */}
-            <div className={homeCss.storyContainer} >
+          </div>
 
-              <div>
+          {/* Story */}
+          <div className={homeCss.storyContainer} >
 
-                <button id={"leftShift"} title={'leftShift'} onClick={this.onClickShifter}  ></button>  {/* shifter  */}
-
-                <button id={"rightShift"} title={'rightShift'} onClick={this.onClickShifter}   ></button>   {/* shifter  */}
-
-                {this.state.collection.slice(this.state.storiesPosition, this.state.storiesPosition + this.state.storiesListLength).map((storyData, index) => (
-
-                  <span data-state={storyData.valid ? 'on' : 'off'} key={index} data-animate={"off"} title="storyToolTip" className={homeCss.story} onMouseEnter={this.onHoverStory} >
-
-                    <span className={homeCss.storyToolInfo}>
-                      <StoryInfo date={storyData.date} />
-                    </span>
-
-                  </span>
-
-                ))}
-
-              </div>
-
-              {/* video */}
-              <div>
-              </div>
-
+            <div data-shrink={this.state.movieSelected} >
+              {
+                this.state.collection.map((vidObj) => (
+                  <span data-date={vidObj.date} data-vid={vidObj.fileName} onClick={this.showVideo}>  </span>
+                ))
+              }
             </div>
+
           </div>
 
-          {/* porfolio page links   */}
-          <div class={homeCss.linksContainer}>
-            {
-              this.state.linkNames.map((name, index) => (
-                <a
-                  onClick={(event) => {
+          {/* Page - Links */}
+          <div className={homeCss.linksContainer}>
 
-                    if (location.href.indexOf('\\') && name === 'home') {
-                      return;
-                    }
-                    location.href = `${location.origin}/${name}.html`;
+            <span></span>
+            <span> <a onClick={() => { this.gotoNextPage(this.state.linkNames[0]) }} > </a> </span>
 
-                  }}
-                >
+            <span></span>
+            <span> <a onClick={() => { this.gotoNextPage(this.state.linkNames[1]) }} > </a> </span>
 
-                </a>
+            <span></span>
+            <span> <a onClick={() => { this.gotoNextPage(this.state.linkNames[2]) }} > </a> </span>
 
-              ))
-            }
+            <span></span>
+            <span> <a onClick={() => { this.gotoNextPage(this.state.linkNames[3]) }} > </a> </span>
+
+            <span></span>
+            <span> <a onClick={() => { this.gotoNextPage(this.state.linkNames[4]) }} > </a> </span>
+
+            <span></span>
+
+
           </div>
+
+          {/* vid */}
+
+          {
+            this.state.movieSelected != true ? "" :
+
+              <div className={homeCss.playModule}>
+
+                {/* exit */}
+                <button onClick={this.closeVideo}> {'\u274E'} </button>
+
+                {/* player  */}
+                <div>
+                  <video controlsList={['nodownload', 'disablePictureInPicture'].toString()} controls autoPlay={true} src={`http://localhost:3001/assets/videos/${this.state.selectedVideo}`}  >
+                  </video>
+                </div>
+
+              </div>
+          }
 
         </div>
 
@@ -122,33 +123,14 @@ export default class Home extends React.Component {
   }
 
   init() {
-    var template = {
-      valid: true,
-      date: ["Wed", "Oct", "2", "2020"],
-      video: "video-link",
-    };
-
-    for (let i = 0; i < 100; i++) {
-      setTimeout((id) => {
-
-        let tmp = Object.create(template);
-
-        // NOTE DATA ARRAY IS SHARED VARIABLE
-        tmp.date = tmp.date.slice();
-        tmp.date[2] = id + "";
-
-        tmp.valid = Math.round(Math.random());
-
-        this.setState({ collection: this.state.collection.concat(tmp) })
-
-      }, 1000, i)
-
-    }
-
-  }
-
-  onHoverStory() {
-
+    fetch(window.location.href + 'home.html/readVideos', { method: 'GET' })
+      .then(resp => {
+        return (resp.json());
+      })
+      .then(json => {
+        this.setState({ collection: json });
+      })
+      .catch()
   }
 
   onClickShifter(event) {
@@ -166,7 +148,7 @@ export default class Home extends React.Component {
       return tmp;
     };
 
-    if (this.state.collection.length == 0 || this.state.storiesPosition == 0 && event.currentTarget.title == 'leftShift') {
+    if (this.state.storiesPosition == 0 && event.currentTarget.title == 'leftShift') {
       return;
     }
 
@@ -229,5 +211,31 @@ export default class Home extends React.Component {
       /* UPDATING STORIES (IN USE) */
     }
   }
+
+
+  gotoNextPage(name) {
+    if (location.href.indexOf('\\') && name === 'home') {
+      return;
+    }
+    location.href = `${location.origin}/${name}.html`;
+  }
+
+  showVideo(event) {
+
+    Promise.resolve(event.currentTarget.dataset.vid)
+      .then(videoFilename => {
+        console.log(videoFilename)
+        Promise.resolve(this.setState({ selectedVideo: videoFilename }))
+      })
+      .then(() => {
+        Promise.resolve(this.setState({ movieSelected: true }))
+      })
+  }
+
+  closeVideo(event) {
+    this.setState({ movieSelected: false });
+  }
+
+
 
 }

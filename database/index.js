@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { exit } = require('process');
 const metaFile = 'hidefile-meta.json';
-const json = JSON.parse(fs.readFileSync(path.resolve(__dirname, metaFile)));
 const readline = require('readline');
+const json = JSON.parse(fs.readFileSync(path.resolve(__dirname, metaFile)));
 
 const config = {
   password: 'testing123',
@@ -39,9 +39,8 @@ const session = mysqlx.getSession(config)
 
 exports.sessionsql = session;  // db schema 
 
-/*
-  initialize database with static data. 
-*/
+
+/* database configuration functions */
 
 const initdb = function (session) {
   let db = session.getSchema('marveldb');
