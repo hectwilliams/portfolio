@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "react": "webpack -p --watch --progress ",
-    "server": "node ./server/index.js",
+    "server": "nodemon ./server/index.js",
     "load-db": "node ./database/index.js init"
   },
   "babel": {
