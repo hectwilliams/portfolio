@@ -256,20 +256,25 @@ homeRouter.get('/readVideos', (req, res) => {
       new Promise((resolve, reject) => {
         let files = fileList.filter((f) => { return f.match(/vid.*/) != null });
 
-        files.forEach((file) => {
-          let currFile = path.resolve(dir, file);
-          fs.stat(currFile, "utf8", (err, stats) => {
-            if (err) {
-              reject();
-            }
-            else {
-              obj.push({ fileName: file, date: stats.birthtime.toISOString().substr(0, stats.birthtime.toISOString().lastIndexOf("T")) });
-              if (obj.length == 2) {
-                resolve(obj);
-              }
-            }
+        Promise.resolve(files)
+          .then((files) => {
+
+
+            files.forEach((file) => {
+              let currFile = path.resolve(dir, file);
+              fs.stat(currFile, "utf8", (err, stats) => {
+                if (err) {
+                  reject();
+                }
+                else {
+                  obj.push({ fileName: file, date: stats.birthtime.toISOString().substr(0, stats.birthtime.toISOString().lastIndexOf("T")) });
+                  if (obj.length == files.length) {
+                    resolve(obj);
+                  }
+                }
+              })
+            });
           })
-        });
       })
         .then((data) => {
           res.send(data);

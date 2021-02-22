@@ -105,8 +105,7 @@ export default class Home extends React.Component {
 
                 {/* player  */}
                 <div>
-                  <video controlsList={['nodownload', 'disablePictureInPicture'].toString()} controls autoPlay={true} src={`http://localhost:3001/assets/videos/${this.state.selectedVideo}`}  >
-                  </video>
+                  <video loop controlsList={['nodownload', 'disablePictureInPicture'].toString()} autoPlay={true} src={`http://localhost:3001/assets/videos/${this.state.selectedVideo}`} />
                 </div>
 
               </div>
@@ -235,7 +234,5 @@ export default class Home extends React.Component {
   closeVideo(event) {
     this.setState({ movieSelected: false });
   }
-
-
 
 }
