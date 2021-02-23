@@ -93,15 +93,18 @@
 .storyContainer > div:first-child 
 {
   grid-area: 1 / 1 / end / span 99;
+
   display: grid;
   grid-template-columns: repeat(4, 20px);
-  grid-template-rows: auto;
+  grid-template-rows:  repeat(100, 150px);
 
-  column-gap: 130px;
-  row-gap: 20px;
+  column-gap: 160px;
+  row-gap: 2px;
+  
   width: inherit;
   height: inherit;
   justify-content: center;
+  
   overflow-y: scroll;
   border: gray groove 1px;
   padding-top: 2em;
@@ -113,8 +116,8 @@
   height: 100px;
   background-color: rgb(155, 190, 190);
   border-radius: 6px;
+  cursor: pointer;
 }
-
 
 .storyContainer > div:first-child[data-shrink="true"]  
 {
@@ -122,10 +125,11 @@
 
   display: grid;
   grid-template-columns: repeat(1, 10px);
-  grid-template-rows: repeat(100, 1fr);;
+  grid-template-rows: repeat(500, 1fr);;
   justify-content: left;
-  padding-left: 40px;
+  padding-left: 35%;
   border: purple groove;
+  row-gap: 30px;
 } 
 
 .storyContainer > div:first-child[data-shrink="true"]  > span 
@@ -133,8 +137,6 @@
   margin-left: 10px;
 }
 
-
-/* .storyContainer > div:first-child > span[name]:hover::after  */
 .storyContainer > div:first-child > span[data-date]:after 
 {
   content: "🎬 "  attr(data-date);
@@ -312,6 +314,9 @@
   z-index: 5;
   width: 10px;
   columns: 10px;
+  padding: 0;
+  margin: 0;
+
 }
 
 .playModule button:active
@@ -322,19 +327,23 @@
 .playModule > div 
 {
   grid-area: 1 / 1 / 98 / 98;
-  
   display: grid;
   grid-template-columns: repeat(100, 1fr);
   grid-template-rows: repeat(100, 1fr);
+  outline: none;
+  margin: auto;
+
 } 
 
 .playModule > div > video 
 {
   grid-area: 1 / 1 /  end /  end;
-  /* border: groove 4px yellow; */
-  display: inline;
+  display: block;
   height: 350px;
   width: 100%;
   object-position: center;
-  object-fit: contain;
+  object-fit: cover scale-down;
+  /* padding-top: 150px; */
+  outline: none;
+
 }

@@ -105,7 +105,7 @@ export default class Home extends React.Component {
 
                 {/* player  */}
                 <div>
-                  <video loop controlsList={['nodownload', 'disablePictureInPicture'].toString()} autoPlay={true} src={`http://localhost:3001/assets/videos/${this.state.selectedVideo}`} />
+                  <video loop controls controlsList={['nodownload', 'disablePictureInPicture'].toString()} autoPlay={true} src={`http://localhost:3001/assets/videos/${this.state.selectedVideo}`} />
                 </div>
 
               </div>
