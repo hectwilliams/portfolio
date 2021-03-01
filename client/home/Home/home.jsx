@@ -36,7 +36,7 @@ export default class Home extends React.Component {
           <div className={homeCss.imgContainer}>
 
             {/* Image */}
-            <div> </div>
+            <img src="http://localhost:3001/assets/images/icon-aboutme.png" />
 
             {/*  Social Media */}
             <div>
@@ -111,6 +111,10 @@ export default class Home extends React.Component {
               </div>
           }
 
+          <p className={homeCss.message2} >
+            "It has become appallingly obvious that our technology has exceeded our humanity" - Albert Einstien
+          </p>
+
         </div>
 
       </div>
@@ -172,17 +176,13 @@ export default class Home extends React.Component {
           .then((currNode) => {
 
             (this.setState({
-
               // UPDATE STORIES ARRAY
               storiesPosition: this.state.storiesPosition + k
-
             }));
-
             return Promise.resolve(currNode);
           })
 
           .then((currNode) => {
-
             return new Promise((resolve) => {
               // ALLOW ANIMATION TO COMPLETE
               setTimeout(() => {

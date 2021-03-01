@@ -44,57 +44,38 @@ export default class About extends React.Component {
   render() {
     return (
 
-      <div className={aboutCss.main}>
+      <div >
         <Banner name={'About Me'} />
 
-        < div className={aboutCss.pBox}  >
-          <p>
+
+        <div className={aboutCss.container}>
+
+
+          {/* <p>
             {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][0]}
           </p>
 
-          <img width="250" height="180" src="http://localhost:3001/assets/images/bg.jpg" /> {/* TODO CHANGE TO MY IMAGE */}
+          <img width="250" height="180" src="http://localhost:3001/assets/images/bg.jpg" /> TODO CHANGE TO MY IMAGE*/}
 
-          <br></br>
-
-          {/*  paragraphs about me  */}
-          <p>
-            {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][1]}
-          </p>
-
-          <br></br>
-
-          <p>
-            {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][2]}
-          </p>
-
-          <br></br>
-
-          <p>
-            {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][3]}
-          </p>
-
-        </div>
-
-        {/*  yearly testimonials */}
-
-        <div className={aboutCss.yearlyTestimonial} >
-          <div>
-            <select onChange={this.updateYear} name={'year'} id="year-select" >
-              <option value="">-- Choose year --</option>
+          <div className={aboutCss.yearlyTestimonial} >
+            <ul>
               {
                 this.range(2020, 2025).map((element, index) => (
-                  <option value={element} > {element}</option>
+                  <li onClick={this.updateYear} data-name={element} className={aboutCss.selectYear} > {element} </li>
                 ))
               }
-            </select>
-
-            <div data-currYear={this.state.collection.length}>
-              {
-                this.state.collection.lengt ? '' : this.state.collection.map((message) => (<p> {message} </p>))
-              }
-            </div>
+            </ul>
 
           </div>
+
+
+          <div data-currYear={this.state.collection.length} className={aboutCss.yearlyInfo}>
+            {
+              this.state.collection.length == 0 ? '' : this.state.collection.map((message) => (<p> {message} </p>))
+            }
+          </div>
+
+
         </div>
       </div>
     )
@@ -109,7 +90,8 @@ export default class About extends React.Component {
   }
 
   updateYear(event) {
-    let retVal = parseInt(event.currentTarget.value);
+    let retVal = parseInt(event.currentTarget.dataset.name);
+
     if (this.state.yearlyStatusData.hasOwnProperty(retVal)) {
       this.setState({ collection: this.state.yearlyStatusData[retVal] });
     }

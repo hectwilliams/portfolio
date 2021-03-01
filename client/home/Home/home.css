@@ -21,31 +21,35 @@
   border: gray groove 1px;
 }
 
-.imgContainer >  div:nth-of-type(1)
+.imgContainer >  img
 {
   grid-area: 2 / 2 / span 6 / span 8;
   /* background-image:  url("http://localhost:3001/assets/images/myPicture.jpg"); */
-  background-image: url('http://localhost:3001/assets/images/icon-aboutme.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center; 
+  /* background-image: url('http://localhost:3001/assets/images/icon-aboutme.png'); */
+  /* background-size: contain; */
+  /* background-repeat: no-repeat; */
+  /* background-position: center; */
+  object-fit: contain;
+  object-position: top;
+  height: 50%; 
+  width: 100%;
   z-index: 9;
 }
 
-.imgContainer >  div:nth-of-type(2)
+.imgContainer >  div
 {
   grid-area: 8 / 2 / span 1 / span 8;
   margin: 0 auto;
   text-align: center;
-
+  z-index: 9;
 }
 
-.imgContainer >  div:nth-of-type(2) > a 
+.imgContainer >  div > a 
 {
    padding-right: 1em;
 }
 
-.imgContainer >  div:nth-of-type(2) > a button
+.imgContainer >  div > a button
 {
   width: 20px;
   height: 20px;
@@ -55,27 +59,29 @@
 } 
 
 /* PROFILE SOCIAL MEDIA LINKEDIN*/
-.imgContainer button[title="linkedin-icon"]
+.imgContainer  div button[title="linkedin-icon"]
 {
   background-image: url("http://localhost:3001/assets/images/icon-linkedin.png");
+  z-index: 9;
+
 }
 
 /* PROFILE SOCIAL MEDIA FACEBOOK*/
-.imgContainer button[title="facebook-icon"]
+.imgContainer div button[title="facebook-icon"]
 {
   background-image: url("http://localhost:3001/assets/images/icon-facebook.png");
   opacity: 0.2;
 }
 
 /* PROFILE SOCIAL MEDIA TWITTER*/
-.imgContainer button[title="twitter-icon"]
+.imgContainer div button[title="twitter-icon"]
 {
   background-image: url("http://localhost:3001/assets/images/icon-twitter.png");
   opacity: 0.2;
 }
 
 /* PROFILE SOCIAL MEDIA MEDIAN*/
-.imgContainer button[title="medium-icon"]
+.imgContainer div button[title="medium-icon"]
 {
   background-image: url("http://localhost:3001/assets/images/icon-medium.png");
 }
@@ -347,3 +353,34 @@
   outline: none;
 
 }
+
+
+@keyframes slideInMessage2  {
+  from {
+     padding-left:85%;
+     height: 100%;
+     font-size: xx-small;
+     color: white;
+   }
+ 
+
+   to {
+     padding-left:30%;
+     height: 100%;
+     font-size: large;
+     color: brown;
+   }
+ }
+.message2
+{
+  grid-area: 75 / 20 /  82 / 80;
+  display: inline;
+  font-family: Didot;
+  font-size: large;
+  /* @keyFrames  duration | easing-function | iteration-count*/
+  animation: slideInMessage2 4s ease-in  ;
+  padding-left:30%;
+  color: brown;
+}
+
+

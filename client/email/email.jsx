@@ -82,6 +82,7 @@ export default class Email extends React.Component {
     Promise.all(promiseArray)
       .then((retArrayList) => {
         this.setState({ msgRecords: retArrayList[0].concat([["", "", "", ""]])   /*dummy load*/ });
+        console.log(retArrayList)
         this.setState({ animalRecords: retArrayList[1] });
       });
   }

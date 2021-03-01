@@ -21,6 +21,10 @@ const session = mysqlx.getSession(config)
       if (process.argv[2] == 'init') {
         functor = initdb;
       }
+      if (process.argv[2] == 'table-clear') {
+        functor = cleartabledb;
+      }
+
     }
     return Promise.resolve(functor(session))
       .then(() => {
@@ -41,6 +45,33 @@ exports.sessionsql = session;  // db schema
 
 
 /* database configuration functions */
+const cleartabledb = function (session) {
+  let db = session.getSchema('marveldb');
+  let tables = [
+    'email',
+    'favoritelinks',
+    'aboutme',
+    'spirit_animal',
+    'full_stack',
+    'embedded',
+    'code',
+    'special_projects'
+  ];
+  let promises = Array(8).fill(null);
+
+  Promise.all(
+    tables.map((table) => {
+      return db.getTable(table)
+        .delete()
+        .where('1=1') // placeholder allow all records to be returned 
+        .execute();
+    })
+  )
+    .then((data) => {
+      console.log(' all table records deleted');
+      exit(); // exit thread
+    })
+}
 
 const initdb = function (session) {
   let db = session.getSchema('marveldb');
@@ -48,102 +79,79 @@ const initdb = function (session) {
   return Promise.all(json.sqlCmds.map((createEntry) => {
     /*load tables*/
     return session.sql(createEntry).execute()
+      .then((res) => {
+        // console.log(res);
+      })
       .catch(err => {
         // console.log(err.info)
       })
   }))
-
     .then(() => {
-      let table;
-      let tableLengthInit = 4;
-      let store = Array(tableLengthInit).fill(true);
+      const list = ['EMAIL', 'FAVORITELINKS', 'ABOUTME', 'SPIRIT_ANIMAL']
+      const store = Array(list.length).fill(true);
 
-      /*load init records*/
-      table = db.getTable('email');
-
-      store[0] = table.count()
-        .then((len) => {  //  1-valid  0-invalid
-          return new Promise((resolve) => {
-            if (len) {
-              resolve(1);
-            }
-            if (len == 0) {
-              table
-                .insert(JSON.parse(json.tables[0].fields))
-                .values(json.tables[0].records[0])
-                .execute()
-                .then(() => { resolve(0) })
-            }
+      list.forEach((tableName, i) => {
+        Promise.resolve(db.getTable(tableName))
+          .then(table => {
+            store[i] = table.count() // load promise array
+              .then(numOfRecordsInTable => {
+                return new Promise((resolve) => {   // return always resolves
+                  if (numOfRecordsInTable) {
+                    resolve(1);
+                  }
+                  if (numOfRecordsInTable == 0) {
+                    if (i == 0) {
+                      table
+                        .insert(json.databaseInit.tables[0].fields)
+                        .values(...json.databaseInit.tables[0].records[0])
+                        .execute()
+                        .then(() => {
+                          resolve(0);
+                        })
+                    }
+                    if (i == 1) {
+                      table
+                        .insert(json.databaseInit.tables[1].fields)
+                        .values(...json.databaseInit.tables[1].records[0])
+                        .values(...json.databaseInit.tables[1].records[1])
+                        .values(...json.databaseInit.tables[1].records[2])
+                        .values(...json.databaseInit.tables[1].records[3])
+                        .execute()
+                        .then(() => {
+                          resolve(0)
+                        })
+                    }
+                    if (i == 2) {
+                      table
+                        .insert(json.databaseInit.tables[2].fields)
+                        .values(...json.databaseInit.tables[2].records[0])
+                        .values(...json.databaseInit.tables[2].records[1])
+                        .values(...json.databaseInit.tables[2].records[2])
+                        .values(...json.databaseInit.tables[2].records[3])
+                        .values(...json.databaseInit.tables[2].records[4])
+                        .values(...json.databaseInit.tables[2].records[5])
+                        .values(...json.databaseInit.tables[2].records[6])
+                        .values(...json.databaseInit.tables[2].records[7])
+                        .execute()
+                        .then(() => { resolve(0) })
+                    }
+                    if (i == 3) {
+                      table
+                        .insert(json.databaseInit.tables[3].fields)
+                        .values(...json.databaseInit.tables[3].records[0])
+                        .values(...json.databaseInit.tables[3].records[1])
+                        .values(...json.databaseInit.tables[3].records[2])
+                        .values(...json.databaseInit.tables[3].records[3])
+                        .values(...json.databaseInit.tables[3].records[4])
+                        .values(...json.databaseInit.tables[3].records[5])
+                        .execute()
+                        .then(() => { resolve(0) })
+                    }
+                  }
+                })
+              })
           })
-        })
-
-      table = db.getTable('favoritelinks');
-      store[1] = table.count()
-        .then(len => {
-          return new Promise((resolve) => {
-            if (len) {
-              resolve(1);
-            }
-            if (len == 0) {
-              table
-                .insert(JSON.parse(json.tables[1].fields))
-                .values(json.tables[1].records[0])
-                .values(json.tables[1].records[1])
-                .values(json.tables[1].records[2])
-                .values(json.tables[1].records[3])
-                .execute()
-                .then(() => { resolve(0) })
-            }
-          })
-        })
-
-      table = db.getTable('aboutme');
-      store[2] = table.count()
-        .then(len => {
-          return new Promise((resolve) => {
-            if (len) {
-              resolve(1);
-            }
-            if (len == 0) {
-              table
-                .insert(JSON.parse(json.tables[2].fields))
-                .values(json.tables[2].records[0])
-                .values(json.tables[2].records[1])
-                .values(json.tables[2].records[2])
-                .values(json.tables[2].records[3])
-                .values(json.tables[2].records[4])
-                .values(json.tables[2].records[5])
-                .values(json.tables[2].records[6])
-                .values(json.tables[2].records[7])
-                .execute()
-                .then(() => { resolve(0) })
-
-            }
-          })
-        })
-
-      table = db.getTable('spirit_animal');
-      store[3] = table.count()
-        .then(len => {
-          return new Promise((resolve) => {
-            if (len) {
-              resolve(1);
-            }
-            if (len == 0) {
-              table
-                .insert(JSON.parse(json.tables[3].fields))
-                .values(json.tables[3].records[0])
-                .values(json.tables[3].records[1])
-                .values(json.tables[3].records[2])
-                .values(json.tables[3].records[3])
-                .values(json.tables[3].records[4])
-                .values(json.tables[3].records[5])
-                .execute()
-                .then(() => { resolve(0) })
-            }
-          })
-        })
-
+      })
       return Promise.all(store);
     })
 
@@ -161,6 +169,7 @@ const initdb = function (session) {
         const rl = readline.createInterface({
           input: readStream
         });
+
 
         /* parse .csv */
 

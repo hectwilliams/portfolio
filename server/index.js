@@ -6,9 +6,9 @@ const cors = require('cors');
 const port = 3001;
 const host = process.env.SERVER_HOSTNAME || 'localhost';
 const db = require('../database/index.js');
-const https = require('https');
-const http = require('http');
 const fs = require('fs');
+// const https = require('https');
+// const http = require('http');
 
 app.locals.title = 'Portfolio';
 app.use(cors());
@@ -286,3 +286,4 @@ homeRouter.get('/readVideos', (req, res) => {
     }
   })
 });
+
