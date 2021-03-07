@@ -8,8 +8,12 @@ export default class About extends React.Component {
     this.state = {
       collection: [],
       yearlyStatusData: {},
+      msgIndex: 0
     }
     this.updateYear = this.updateYear.bind(this);
+    this.showMsg = this.showMsg.bind(this);
+    this.getNextMsg = this.getNextMsg.bind(this);
+    this.removeMsg = this.removeMsg.bind(this);
   }
 
   componentDidMount() {
@@ -47,16 +51,11 @@ export default class About extends React.Component {
       <div >
         <Banner name={'About Me'} />
 
-
         <div className={aboutCss.container}>
-
-
-          {/* <p>
+          { /* <p>
             {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][0]}
-          </p>
-
-          <img width="250" height="180" src="http://localhost:3001/assets/images/bg.jpg" /> TODO CHANGE TO MY IMAGE*/}
-
+              </p>
+          */}
           <div className={aboutCss.yearlyTestimonial} >
             <ul>
               {
@@ -65,20 +64,46 @@ export default class About extends React.Component {
                 ))
               }
             </ul>
-
           </div>
-
-
           <div data-currYear={this.state.collection.length} className={aboutCss.yearlyInfo}>
             {
               this.state.collection.length == 0 ? '' : this.state.collection.map((message) => (<p> {message} </p>))
             }
           </div>
 
+          <buton onClick={this.getNextMsg} onMouseLeave={this.removeMsg} onMouseEnter={this.showMsg} className={aboutCss.quoteMe}>
+            <span  > " </span>
+          </buton>
+
+          <div className={aboutCss.showMessage}>
+            {this.state.yearlyStatusData[0] == null ? '' : ` ${String.fromCharCode(65 + this.state.msgIndex)}) \n ${this.state.yearlyStatusData[0][this.state.msgIndex]}`}
+          </div>
 
         </div>
       </div>
     )
+  }
+
+  getNextMsg(event) {
+    let arr = this.state.yearlyStatusData[0];
+    if (arr) {
+      if (this.state.msgIndex + 1 < arr.length) {
+        this.setState({ msgIndex: this.state.msgIndex + 1 });
+      }
+      else {
+        this.setState({ msgIndex: 0 });
+      }
+    }
+  }
+  showMsg(event) {
+    let node = event.currentTarget.nextElementSibling;
+    node.style.visibility = "visible";
+  }
+
+  removeMsg(event) {
+    let node = event.currentTarget.nextElementSibling;
+    node.style.visibility = "collapse";
+    this.setState({ msgIndex: 0 });
   }
 
   range(start, end) {

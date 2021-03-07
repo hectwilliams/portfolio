@@ -322,7 +322,6 @@
   columns: 10px;
   padding: 0;
   margin: 0;
-
 }
 
 .playModule button:active
@@ -338,7 +337,6 @@
   grid-template-rows: repeat(100, 1fr);
   outline: none;
   margin: auto;
-
 } 
 
 .playModule > div > video 
@@ -351,9 +349,7 @@
   object-fit: cover scale-down;
   /* padding-top: 150px; */
   outline: none;
-
 }
-
 
 @keyframes slideInMessage2  {
   from {
@@ -362,8 +358,6 @@
      font-size: xx-small;
      color: white;
    }
- 
-
    to {
      padding-left:30%;
      height: 100%;

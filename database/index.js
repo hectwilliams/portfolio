@@ -16,23 +16,25 @@ const config = {
 
 const session = mysqlx.getSession(config)
   .then(session => {
-    let functor = (noop) => { }; // dummy function 
+    let functor = undefined; // dummy function 
     if (process.argv.length == 3) {
       if (process.argv[2] == 'init') {
         functor = initdb;
       }
-      if (process.argv[2] == 'table-clear') {
+      else if (process.argv[2] == 'table-clear') {
         functor = cleartabledb;
       }
-
     }
-    return Promise.resolve(functor(session))
-      .then(() => {
-        return Promise.resolve(session);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    if (functor) {
+      return Promise.resolve(functor(session))
+        .then(() => {
+          return Promise.resolve(session);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+    return Promise.resolve(session);
   })
   .then((session) => {
     return session.getSchema(config.schema);

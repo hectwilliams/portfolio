@@ -10,7 +10,6 @@ const fs = require('fs');
 // const https = require('https');
 // const http = require('http');
 
-app.locals.title = 'Portfolio';
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +19,6 @@ app.listen(port, host, () => {
   console.log('express server running on port 3001');
 });
 
-// console.log(app.locals.title);
 var data = [];
 var metadata = [];
 

@@ -26,6 +26,7 @@ body{
   top:0;
   position: absolute;
   background-color: gray;
+  padding-left: 20px;
 }
 
 .container span:hover
