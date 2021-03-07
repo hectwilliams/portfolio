@@ -131,9 +131,6 @@ const initdb = function (session) {
                         .values(...json.databaseInit.tables[2].records[2])
                         .values(...json.databaseInit.tables[2].records[3])
                         .values(...json.databaseInit.tables[2].records[4])
-                        .values(...json.databaseInit.tables[2].records[5])
-                        .values(...json.databaseInit.tables[2].records[6])
-                        .values(...json.databaseInit.tables[2].records[7])
                         .execute()
                         .then(() => { resolve(0) })
                     }

@@ -8,7 +8,8 @@ export default class About extends React.Component {
     this.state = {
       collection: [],
       yearlyStatusData: {},
-      msgIndex: 0
+      msgIndex: 0,
+      ref: null
     }
     this.updateYear = this.updateYear.bind(this);
     this.showMsg = this.showMsg.bind(this);
@@ -52,10 +53,6 @@ export default class About extends React.Component {
         <Banner name={'About Me'} />
 
         <div className={aboutCss.container}>
-          { /* <p>
-            {this.state.yearlyStatusData[0] == null ? '' : this.state.yearlyStatusData[0][0]}
-              </p>
-          */}
           <div className={aboutCss.yearlyTestimonial} >
             <ul>
               {
@@ -76,7 +73,14 @@ export default class About extends React.Component {
           </buton>
 
           <div className={aboutCss.showMessage}>
-            {this.state.yearlyStatusData[0] == null ? '' : ` ${String.fromCharCode(65 + this.state.msgIndex)}) \n ${this.state.yearlyStatusData[0][this.state.msgIndex]}`}
+            <label> NEWS! </label>
+            <img src={"http://localhost:3001/assets/images/icon-newspaper.png"} />
+            <p>
+              {this.state.yearlyStatusData[0] == null ? '' : `${this.state.yearlyStatusData[0][this.state.msgIndex]}`}
+            </p >
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
 
         </div>
@@ -96,14 +100,30 @@ export default class About extends React.Component {
     }
   }
   showMsg(event) {
+    let callback = (labelNode) => {
+      let rgb = "#";
+
+      for (let i = 0; i < 6; i++) {
+        let number = Math.floor(Math.random() * (15 - 0 + 1) + 0);
+        if (number > 9) {
+          rgb += String.fromCharCode((number - 10) + 65);
+        }
+        else {
+          rgb += number
+        }
+      }
+      labelNode.style.color = rgb;
+    };
+
     let node = event.currentTarget.nextElementSibling;
     node.style.visibility = "visible";
+    this.setState({ ref: setInterval(callback, 700, node.firstChild) });
   }
 
   removeMsg(event) {
     let node = event.currentTarget.nextElementSibling;
     node.style.visibility = "collapse";
-    this.setState({ msgIndex: 0 });
+    this.setState({ msgIndex: 0, ref: clearInterval(this.state.ref) });
   }
 
   range(start, end) {
